@@ -57,9 +57,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: yourusername/portfolio-backend:latest
-          cache-from: type=registry,ref=yourusername/portfolio-backend:buildcache
-          cache-to: type=registry,ref=yourusername/portfolio-backend:buildcache,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:buildcache,mode=max
           
   deploy:
     name: Deploy to Production
@@ -75,7 +75,24 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            cd /path/to/your/app
+            cd ${{ secrets.DEPLOY_PATH }}
+            echo "Pulling latest Docker images..."
             docker-compose -f docker-compose.prod.yml pull
+            
+            echo "Creating .env.production if it doesn't exist..."
+            if [ ! -f .env.production ]; then
+              echo "Creating .env.production from template"
+              cp .env.example .env.production
+              # Update environment variables from secrets
+              sed -i "s/JWT_SECRET=.*/JWT_SECRET=${{ secrets.JWT_SECRET }}/g" .env.production
+              sed -i "s/MONGO_USER=.*/MONGO_USER=${{ secrets.MONGO_USER }}/g" .env.production
+              sed -i "s/MONGO_PASSWORD=.*/MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}/g" .env.production
+              sed -i "s/REDIS_PASSWORD=.*/REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}/g" .env.production
+              sed -i "s/OPENAI_API_KEY=.*/OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}/g" .env.production
+            fi
+            
+            echo "Starting production deployment..."
             docker-compose -f docker-compose.prod.yml up -d
-            docker system prune -af
+            
+            echo "Cleaning up unused Docker resources..."
+            docker system prune -af --volumes

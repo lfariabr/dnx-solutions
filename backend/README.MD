@@ -14,6 +14,7 @@ Menu:
 11. Implementing Data Validation and Error Handling
 12. Implement Testing backend
 13. Dockerize Backend
+14. Implement CI/CD
 
 Pending:
 14. Move to Frontend
@@ -423,7 +424,7 @@ query ChatHistory {
 }
 ```
 
-# 11. Implementing Data Validation and Error Handling
+## 11. Implementing Data Validation and Error Handling
 - Implement input validation for all GraphQL mutations
 - Create standardized error responses
 - Add logging middleware for better debugging
@@ -472,7 +473,7 @@ tsconfig.json
 src/index.ts
 ```
 
-# 12. Implement Testing backend
+## 12. Implement Testing backend
 
 1. Let's install Jest and related dependencies
 npm install --save-dev jest ts-jest @types/jest supertest @shelf/jest-mongodb
@@ -687,3 +688,74 @@ docker-compose up --build
 
 # Stop all running containers
 docker-compose down
+
+## 14. Implement CI/CD
+
+1. Setup github repo
+git init
+git add .
+git commit -m "Initial commit with Docker and CI/CD setup"
+git remote add origin 
+git push -u origin main
+
+2. Configure Github Secrets
+In your GitHub repository, go to Settings > Secrets and Variables > Actions and add the following secrets:
+
+- `DOCKERHUB_USERNAME`: Your Docker Hub username
+- `DOCKERHUB_TOKEN`: Your Docker Hub access token (create one at https://hub.docker.com/settings/security)
+- `DEPLOY_HOST`: Your server's IP address or hostname
+- `DEPLOY_USER`: SSH username for your server
+- `DEPLOY_KEY`: SSH private key for accessing your server
+- `DEPLOY_PATH`: Path to your application on the server (e.g., `/home/user/portfolio-backend`)
+- `JWT_SECRET`: Secret key for JWT authentication
+- `MONGO_USER`: MongoDB username
+- `MONGO_PASSWORD`: MongoDB password
+- `REDIS_PASSWORD`: Redis password
+- `OPENAI_API_KEY`: Your OpenAI API key
+
+3. Our workflow file (`.github/workflows/main.yml`) defines a pipeline with three stages:
+
+1. **Test**: Runs your test suite to ensure code quality
+2. **Build**: Builds and pushes a Docker image to Docker Hub
+3. **Deploy**: Deploys the application to your production server
+
+The workflow is triggered on push to main/master branches and on pull requests.
+
+4. Deployment Process
+- Pulls the latest Docker images
+- Creates `.env.production` if it doesn't exist
+- Updates environment variables from GitHub secrets
+- Starts the application using Docker Compose
+- Cleans up unused Docker resources
+
+5. Monitoring Deployments
+
+You can monitor your deployments in the "Actions" tab of your GitHub repository. Each workflow run will show the status of your tests, build, and deployment.
+
+6. Manual Deployment
+
+If you need to deploy manually, you can use:
+
+```bash
+# SSH into your server
+ssh user@your-server
+
+# Navigate to your application directory
+cd /path/to/your/app
+
+# Pull the latest image
+docker-compose -f docker-compose.prod.yml pull
+
+# Deploy
+docker-compose -f docker-compose.prod.yml up -d
+
+# Clean up
+docker system prune -af
+```
+
+7. Best Practices
+- Keep secrets in GitHub Secrets, never in code
+- Use semantic versioning for Docker images
+- Implement proper monitoring and logging
+- Consider setting up staging environments
+- Add notifications for successful/failed deployments
