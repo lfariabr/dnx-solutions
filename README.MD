@@ -15,6 +15,7 @@ A modern portfolio application built with Next.js, TypeScript, Node.js, GraphQL,
 - Next.js 14+ with TypeScript
 - Apollo Client for GraphQL integration
 - TailwindCSS for styling
+- shadcn/ui for components
 - NextAuth.js for authentication
 
 ### Backend
@@ -27,7 +28,7 @@ A modern portfolio application built with Next.js, TypeScript, Node.js, GraphQL,
 
 ## Project Structure
 ```
-portfolio/
+luisfaria/
 ├── frontend/          # Next.js with TypeScript
 ├── backend/           # Node.js, Apollo, GraphQL API
 ├── shared/            # Shared types and utilities

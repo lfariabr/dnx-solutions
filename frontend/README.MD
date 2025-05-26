@@ -1,0 +1,124 @@
+# Frontend documentation
+
+Menu:
+1. Set up Next.js project
+2. Implement Apollo Client
+3. Create core components and layouts using shadcn/ui
+4. Login/Register
+5. Projects
+6. Articles
+7. Chatbot
+8. Dashboard / Admin area (to add, edit, delete projects, articles, users)
+9. My profile / to change password, update profile, see chatbot history
+10. Logout
+11. Relay Compiler for efficient data fetching
+12. AWS setup for file storage and data storage
+
+Pending:
+1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot
+2. Set Up Authentication: Connect to your backend authentication endpoints
+3. GraphQL Integration: Create specific queries and mutations to fetch data from your backend
+4. Admin Dashboard: Set up the admin interface for content management
+
+Style:
+- Use shadcn/ui for components
+- Use TailwindCSS for styling
+
+References:
+- Matrix Theme
+- Strong heavily animated website: https://strong.dev/
+
+## 1. Setup Next.js project
+cd ../frontend
+npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir
+
+## 2. Implement Apollo Client
+npm install @apollo/client graphql
+
+## 3. Create core components and layouts using shadcn/ui
+npm install -D @shadcn/ui
+npx shadcn-ui@latest init
+
+## 4. Structure
+
+frontend/
+├── src/
+│   ├── app/                      # Next.js App Router
+│   │   ├── (auth)/               # Authentication routes
+│   │   │   ├── login/
+│   │   │   └── register/
+│   │   ├── (main)/               # Main public routes
+│   │   │   ├── projects/
+│   │   │   ├── articles/
+│   │   │   └── chatbot/
+│   │   └── (admin)/              # Admin dashboard routes
+│   ├── components/               # React components
+│   │   ├── ui/                   # UI components from shadcn
+│   │   ├── layouts/              # Layout components
+│   │   └── shared/               # Shared components
+│   ├── lib/                      # Utility functions
+│   │   ├── apollo/               # Apollo Client setup
+│   │   └── auth/                 # Authentication utilities
+│   └── styles/                   # Global styles
+└── public/                       # Static assets
+
+## 5. Create essential directories
+mkdir -p src/components/ui src/lib/apollo src/app/\(auth\) src/app/\(main\) src/app/\(admin\)
+
+## 6. Create new page
+touch src/app/page.tsx
+
+## 7. Implement Apollo Client
+touch src/lib/apollo/client.ts
+
+## 8. Implement Apollo Provider
+touch src/lib/apollo/ApolloProvider.tsx
+
+## 9. Implement layout and wrap it with Apollo Provider
+touch src/app/layout.tsx
+
+## 10. Set up shadcn/ui components 
+npm install -D @shadcn/ui
+npx shadcn-ui@latest init
+
+## 11. Install essential components
+npx shadcn@latest add button card form input sonner dialog avatar dropdown-menu
+
+## 12. Create layouts
+mkdir -p src/components/layouts
+touch src/components/layouts/Header.tsx
+touch src/components/layouts/Footer.tsx
+touch src/components/layouts/MainLayout.tsx
+
+## 13. Install GraphQL Type Generator
+npm install -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typescript-react-apollo
+
+## 14. Creating Main Layout Components
+Create Header.tsx, Footer.tsx, and MainLayout.tsx in src/components/layouts
+
+## 15. Implement Theme options
+Create theme-provider.tsx in src/components
+Create ThemeSwitcher.tsx in src/components
+Create ThemeToggle.tsx in src/components
+
+## 16. Update home page to use main layout
+Update src/app/page.tsx
+
+## 17. Run first version
+- Install next-themes for theme support:
+npm install next-themes
+
+- Install lucide-react for icons:
+npm install lucide-react
+
+- Start the development server:
+npm run dev
+
+## 18. Create placeholder pages for Projects, Articles, and Chatbot
+Create src/app/projects/page.tsx
+Create src/app/articles/page.tsx
+Create src/app/chatbot/page.tsx
+
+## 19. Install dependencies for packages to work
+npm install date-fns
+npm install lucide-react
