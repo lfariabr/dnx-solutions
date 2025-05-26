@@ -8,6 +8,7 @@ import path from 'path';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { typeDefs } from './schemas/typeDefs';
 import { resolvers } from './resolvers';
 import { getUser } from './middleware/auth';
@@ -54,6 +55,7 @@ async function startServer() {
     // Create Apollo Server
     const server = new ApolloServer<MyContext>({
       schema: schemaWithMiddleware,
+      introspection: true, // Enable introspection in all environments
       plugins: [
         ApolloServerPluginDrainHttpServer({ httpServer }),
         {
@@ -71,6 +73,9 @@ async function startServer() {
             };
           },
         },
+        ApolloServerPluginLandingPageLocalDefault({ 
+          includeCookies: true,
+        }),
       ],
       formatError: (formattedError) => {
         // Don't expose internal server errors to the client in production
@@ -89,7 +94,15 @@ async function startServer() {
     
     await server.start();
     
-    app.use(cors());
+    // Configure CORS with specific options
+    const corsOptions = {
+      origin: config.nodeEnv === 'production' 
+        ? ['https://yourdomain.com', 'http://localhost:3000'] // Add your frontend domains
+        : '*',
+      credentials: true
+    };
+    
+    app.use(cors(corsOptions));
     app.use(express.json());
     app.get('/health', (_, res) => {
       res.status(200).send('OK');
@@ -97,7 +110,7 @@ async function startServer() {
     
     app.use('/graphql', 
       express.json(),
-      cors(),
+      cors(corsOptions),
       // @ts-ignore - Ignoring type issues with Express middleware
       expressMiddleware(server, {
         context: async ({ req }: any) => {
