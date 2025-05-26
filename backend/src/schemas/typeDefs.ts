@@ -2,12 +2,14 @@ import { projectTypes } from './types/projectTypes';
 import { articleTypes } from './types/articleTypes';
 import { userTypes } from './types/userTypes';
 import { rateTestTypes } from './types/rateTestTypes';
+import { chatbotTypes } from './types/chatbotTypes';
 
 export const typeDefs = `#graphql
   ${projectTypes}
   ${articleTypes}
   ${userTypes}
   ${rateTestTypes}
+  ${chatbotTypes}
 
   type Query {
 
@@ -32,6 +34,9 @@ export const typeDefs = `#graphql
 
     # Rate limit test query
     testRateLimit: RateLimitInfo
+
+    # Chatbot queries
+    chatHistory(limit: Int = 10, offset: Int = 0): [ChatMessage!]!
   }
 
   type Mutation {
@@ -51,6 +56,9 @@ export const typeDefs = `#graphql
     register(input: RegisterInput!): AuthPayload!
     login(input: LoginInput!): AuthPayload!
     logout: Boolean!
+
+    # Chatbot mutations
+    askQuestion(question: String!): ChatResponse!
   }
 
   type Subscription {
@@ -58,5 +66,8 @@ export const typeDefs = `#graphql
     register: AuthPayload
     login: AuthPayload
     logout: Boolean
+
+    # Chatbot subscriptions
+    chatHistory(limit: Int = 10, offset: Int = 0): [ChatMessage!]!
   }
 `;

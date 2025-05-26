@@ -10,9 +10,9 @@ Menu:
 7. Implementing authentication with JWT
 8. Testing endpoints and auth
 9. Implement Redis for Rate Limiting
+10. Implementing OpenAI Chatbot
 
 Pending:
-Implement the AI Chatbot Feature
 Add Data Validation and Error Handling
 Implement Testing backend
 Set Up Deployment Configuration
@@ -358,5 +358,64 @@ query TestRateLimit {
       }
     }
   ]
+}
+```
+
+10. Implementing AI Chatbot
+
+1. Install open ai
+npm install openai
+
+2. Create a new file in src/services/openai.ts
+
+3. Update config to include openai api key
+src/config/config.ts
+
+4. Create ChatMessage model for storing conversations
+src/models/ChatMessage.ts
+
+5. Add chatbot types to graphql schema
+src/schemas/types/chatbotTypes.ts
+
+6. Update main schema file to include chatbot types
+src/schemas/typeDefs.ts
+
+7. Create a resolver for the chatbot
+src/resolvers/chatbot/queries.ts
+src/resolvers/chatbot/mutations.ts
+
+8. Update the main resolver to include the chatbot resolver
+src/resolvers/index.ts
+
+9. Test
+- Ask a question:
+```
+mutation AskQuestion {
+  askQuestion(question: "What is the capital of France?") {
+    message {
+      id
+      question
+      answer
+      modelUsed
+      createdAt
+    }
+    rateLimitInfo {
+      limit
+      remaining
+      resetTime
+    }
+  }
+}
+```
+- Get chat history:
+```
+query ChatHistory {
+  chatHistory(limit: 10, offset: 0) {
+    id
+    question
+    answer
+    modelUsed
+    createdAt
+  }
 }
 ```
