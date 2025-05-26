@@ -1,11 +1,13 @@
 import { projectTypes } from './types/projectTypes';
 import { articleTypes } from './types/articleTypes';
 import { userTypes } from './types/userTypes';
+import { rateTestTypes } from './types/rateTestTypes';
 
 export const typeDefs = `#graphql
   ${projectTypes}
   ${articleTypes}
   ${userTypes}
+  ${rateTestTypes}
 
   type Query {
 
@@ -27,6 +29,9 @@ export const typeDefs = `#graphql
     
     # User queries
     me: User
+
+    # Rate limit test query
+    testRateLimit: RateLimitInfo
   }
 
   type Mutation {

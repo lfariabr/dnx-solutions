@@ -1,6 +1,24 @@
 # Backend documentation
 
-## Setup
+Menu:
+1. Setup
+2. Typescript and initial server architecture
+3. Backend setup
+4. Setting up MongoDB
+5. Creating datamodels (projects, articles, etc)
+6. Expand graphQL schema/resolvers
+7. Implementing authentication with JWT
+8. Testing endpoints and auth
+9. Implement Redis for Rate Limiting
+
+Pending:
+Implement the AI Chatbot Feature
+Add Data Validation and Error Handling
+Implement Testing backend
+Set Up Deployment Configuration
+Move to Frontend
+
+## 1. Setup
 
 1. First we'll create folders
 mkdir -p backend shared docs
@@ -17,7 +35,7 @@ npm install jsonwebtoken redis mongoose dotenv cors
 4. Development dependencies:
 npm install --save-dev typescript ts-node nodemon @types/express @types/node
 
-## Typescript and initial server architecture
+## 2. Typescript and initial server architecture
 
 1. Initialize Typescript
 npx tsc --init
@@ -37,7 +55,7 @@ touch src/index.ts
 6. And finally, a basic config file
 touch src/config/config.ts
 
-## Executing the files
+## 3. Backend Setup
 
 1. Created environment variables in `.env`
 echo "PORT=4000
@@ -84,7 +102,7 @@ npm install @apollo/server@^4.0.0
 npm run dev
 ```
 
-## Setting up MongoDB
+## 4. Setting up MongoDB
 
 1. Create a MongoDB database
 mkdir -p src/db
@@ -106,7 +124,7 @@ MongoDB Setup Options:
   - Create a database user
   - Get your connection string and update .env
 
-## Creating datamodels (projects, articles, etc)
+## 5. Creating datamodels (projects, articles, etc)
 
 1. First, let's create the Project model:
 mkdir -p src/models
@@ -124,7 +142,7 @@ cat > src/models/User.ts + Authentication
 npm install bcryptjs mongoose
 npm install --save-dev @types/bcryptjs
 
-## Expand graphQL schema/resolvers
+## 6. Expand graphQL schema/resolvers
 
 1. Reorganize schema structure
 mkdir -p src/schemas/types
@@ -151,7 +169,7 @@ mkdir src/resolvers/projects
 mkdir src/resolvers/articles
 mkdir src/resolvers/users
 
-## Implement authentication with JWT
+## 7. Implement authentication with JWT
 1. Created user resolvers:
    - User queries (`src/resolvers/users/queries.ts`)
    - User mutations (`src/resolvers/users/mutations.ts`)
@@ -184,9 +202,9 @@ Testing authentication:
 - Register a user: mutation { register(input: { name: "Admin User", email: "luis@luis.com", password: "xxxxxxx" }) { token user { id name email } } }
 - Login: mutation { login(input: { email: "test@test.com", password: "test" }) { token user { id name email } } }
 - Use the token in the HTTP headers: { "Authorization": "Bearer YOUR_TOKEN_HERE" }
-EOF
 
-## Testing endpoints and auth
+
+## 8. Testing endpoints and auth
 1. Registering an admin User
 ```
 mutation RegisterAdmin {
@@ -251,4 +269,94 @@ Click on "Headers" at the bottom of the screen
 Add a header:
 ```
 { "Authorization": "Bearer YOUR_TOKEN_HERE" }
+```
+
+## 9. Implement Redis and Rate Limiting
+
+1. Install redis
+npm install redis
+npm install --save-dev @types/redis
+
+2. Create a Redis service
+mkdir -p src/services
+src/services/redis.ts
+
+3. Create a rate limiter service
+src/services/rateLimiter.ts
+
+4. Update the server to connect to Redis
+src/index.ts
+
+5. Implement rate limit middleware
+src/middleware/rateLimiter.ts
+
+6. Create a test schema for rate limiting
+src/schemas/types/rateTestTypes.ts
+
+7. Update the main schema including the rate limit test query
+src/schemas/typeDefs.ts
+
+8. Create a test resolver to test the rate limit
+src/resolvers/rateTest/queries.ts
+
+9. Update the main resolver to include the rate limit test resolver
+src/resolvers/index.ts
+
+10. Test
+- Logging in and getting one token:
+```
+mutation Login {
+  login(input: {
+    email: "test@test.com", 
+    password: "test"
+  }) {
+    token
+    user {
+      id
+      name
+      email
+    }
+  }
+}
+```
+- Set the auth header in Apollo Explorer:
+```
+{ "Authorization": "Bearer YOUR_TOKEN_HERE" }
+```
+- Test the rate limit test query:
+```
+query TestRateLimit {
+  testRateLimit {
+    limit
+    remaining
+    reset
+  }
+}
+```
+
+- You should get a response like this:
+```
+{
+  "data": {
+    "testRateLimit": {
+      "limit": 2,
+      "remaining": 1,
+      "reset": 60
+    }
+  }
+}
+```
+
+- If you try to test the rate limit test query again, you should get a response like this:
+```
+{
+  "errors": [
+    {
+      "message": "Rate limit exceeded",
+      "extensions": {
+        "code": "RATE_LIMIT_EXCEEDED"
+      }
+    }
+  ]
+}
 ```

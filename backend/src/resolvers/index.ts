@@ -4,6 +4,7 @@ import { articleQueries } from './articles/queries';
 import { articleMutations } from './articles/mutations';
 import { userQueries } from './users/queries';
 import { userMutations } from './users/mutations';
+import { rateTestQueries } from './rateTest/queries';
 
 // Combine all resolvers
 export const resolvers = {
@@ -19,6 +20,9 @@ export const resolvers = {
     
     // User queries
     ...userQueries,
+
+    // Rate limit test queries
+    ...rateTestQueries,
   },
   
   Mutation: {

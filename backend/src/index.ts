@@ -9,6 +9,7 @@ import { resolvers } from './resolvers';
 import config from './config/config';
 import { connectDB } from './db/connection';
 import { getUser } from './middleware/auth';
+import { connectRedis, disconnectRedis } from './services/redis';
 
 console.log(`Starting server in ${config.nodeEnv} mode`);
 
@@ -23,6 +24,7 @@ interface MyContext {
 
 async function startServer() {
   await connectDB();
+  await connectRedis();
 
   const app = express();
   const httpServer = http.createServer(app);
@@ -67,12 +69,14 @@ startServer().catch(err => {
   process.exit(1);
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully');
+  await disconnectRedis();
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully');
+  await disconnectRedis();
   process.exit(0);
 });
