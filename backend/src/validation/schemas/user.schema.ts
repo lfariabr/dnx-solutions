@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Common validation patterns
-const passwordRegex = /(?=\w{4,})/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,}$/;
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 // Register input validation

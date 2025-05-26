@@ -32,4 +32,9 @@ export const connectRedis = async (): Promise<void> => {
     }
   };
   
+// Get Redis client instance
+export const getRedisClient = () => {
+  return redisClient;
+};
+  
 export default redisClient;

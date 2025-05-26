@@ -11,21 +11,19 @@ Menu:
 8. Testing endpoints and auth
 9. Implement Redis for Rate Limiting
 10. Implementing OpenAI Chatbot
+11. Implementing Data Validation and Error Handling
+12. Implement Testing backend
 
 Pending:
-Add Data Validation and Error Handling
-- Implement input validation for all GraphQL mutations
-- Create standardized error responses
-- Add logging middleware for better debugging
-Implement Testing backend
+12. Implement Testing backend
 - Set up Jest for unit testing
 - Create integration tests for GraphQL endpoints
 - Add test coverage reporting
-Set Up Deployment Configuration
+13. Set Up Deployment Configuration
 - Set up Docker for containerization
 - Configure environment variables for different environments
 - Set up CI/CD pipeline
-Move to Frontend
+14. Move to Frontend
 - Set up Next.js project
 - Implement Apollo Client
 - Create core components and layouts using shadcn/ui
@@ -480,3 +478,77 @@ tsconfig.json
 ```bash
 src/index.ts
 ```
+
+# 12. Implement Testing backend
+
+1. Let's install Jest and related dependencies
+npm install --save-dev jest ts-jest @types/jest supertest @shelf/jest-mongodb
+npm install --save-dev @testing-library/react-hooks @apollo/client
+
+2. Create Jest configuration file
+```bash
+touch jest.config.js
+
+```
+3. Configure Jest for TypeScript and MongoDB testing
+// jest.config.js
+module.exports = {
+  preset: '@shelf/jest-mongodb',
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testEnvironment: 'node',
+  collectCoverage: true,
+  coverageReporters: ['text', 'lcov'],
+  coverageDirectory: 'coverage',
+  verbose: true,
+};
+```
+
+4. Create a test directory structure
+```bash
+mkdir -p src/__tests__/unit
+mkdir -p src/__tests__/integration
+mkdir -p src/__tests__/helpers
+```
+
+5. Create a test database config
+```bash
+touch src/__tests__/helpers/dbHandler.ts
+```
+
+6. Update packa.json script for testing
+```json
+"scripts": {
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage"
+}
+```
+
+7. Create test server
+```bash
+touch src/__tests__/helpers/testServer.ts
+```
+
+8. Create jest.config.js
+```bash
+touch jest.config.js
+```
+
+9. Create a steup file referenced in jest.config.js
+```bash
+touch src/__tests__/helpers/setup.ts
+```
+
+10. Run tests
+npm test - Run all tests
+npm run test:watch - Run tests in watch mode during development
+npm run test:coverage - Generate detailed coverage reports
+
+```bash
+npm run test
+```
+
