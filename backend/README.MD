@@ -14,9 +14,21 @@ Menu:
 
 Pending:
 Add Data Validation and Error Handling
+- Implement input validation for all GraphQL mutations
+- Create standardized error responses
+- Add logging middleware for better debugging
 Implement Testing backend
+- Set up Jest for unit testing
+- Create integration tests for GraphQL endpoints
+- Add test coverage reporting
 Set Up Deployment Configuration
+- Set up Docker for containerization
+- Configure environment variables for different environments
+- Set up CI/CD pipeline
 Move to Frontend
+- Set up Next.js project
+- Implement Apollo Client
+- Create core components and layouts using shadcn/ui
 
 ## 1. Setup
 
@@ -361,7 +373,7 @@ query TestRateLimit {
 }
 ```
 
-10. Implementing AI Chatbot
+## 10. Implementing AI Chatbot
 
 1. Install open ai
 npm install openai
@@ -418,4 +430,53 @@ query ChatHistory {
     createdAt
   }
 }
+```
+
+# 11. Implementing Data Validation and Error Handling
+- Implement input validation for all GraphQL mutations
+- Create standardized error responses
+- Add logging middleware for better debugging
+
+1. Installing necessary packages
+```bash
+npm install zod graphql-middleware graphql-shield winston
+npm install --save-dev @types/graphql-middleware @types/graphql-shield
+npm install @graphql-tools/schema graphql-middleware
+```
+zod: Type-safe schema validation
+graphql-middleware & graphql-shield: Middleware for GraphQL resolvers
+winston: Structured logging
+
+2. Create a validation directory and schema files
+```bash
+mkdir -p src/validation/schemas
+src/validation/schemas/user.schema.ts
+src/validation/schemas/article.schema.ts
+src/validation/schemas/project.schema.ts
+src/validation/schemas/chatbot.schema.ts
+```
+
+3. Create middleware and shield files
+```bash
+src/validation/middleware.ts
+src/validation/shield.ts
+```
+
+4. Create utils/logger using winston
+```bash
+src/utils/logger.ts
+```
+
+5. Create a src/types for graphql-middleware and graphql-shield
+```bash
+src/types/graphql-middleware.ts
+src/types/graphql-shield.ts
+```
+
+6. Update TypeScript config to recognize the types
+tsconfig.json
+
+7. Update index.ts to include permissions from shield, logger from logger, fs from fs and path from path
+```bash
+src/index.ts
 ```

@@ -1,15 +1,22 @@
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
+import config from './config/config';
+import fs from 'fs';
+import path from 'path';
+
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { typeDefs } from './schemas/typeDefs';
 import { resolvers } from './resolvers';
-import config from './config/config';
-import { connectDB } from './db/connection';
 import { getUser } from './middleware/auth';
+import { connectDB } from './db/connection';
 import { connectRedis, disconnectRedis } from './services/redis';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { permissions } from './validation/shield';
+import { logger, requestLogger } from './utils/logger';
+import { applyMiddleware } from 'graphql-middleware';
 
 console.log(`Starting server in ${config.nodeEnv} mode`);
 
@@ -23,60 +30,111 @@ interface MyContext {
 }
 
 async function startServer() {
-  await connectDB();
-  await connectRedis();
+  // Create logs directory if it doesn't exist
+  const logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+  }
 
-  const app = express();
-  const httpServer = http.createServer(app);
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  });
-  
-  await server.start();
-  
-  app.use(cors());
-  app.use(express.json());
-  app.get('/health', (_, res) => {
-    res.status(200).send('OK');
-  });
-  
-  app.use('/graphql', 
-    express.json(),
-    cors(),
-    // @ts-ignore - Ignoring type issues with Express middleware
-    expressMiddleware(server, {
-      context: async ({ req }: any) => {
-        // Get the user from the token
-        const user = getUser(req);
-        
-        // Add the user to the context
-        return { user };
+  try {
+    // Connect to databases
+    await connectDB();
+    await connectRedis();
+    
+    // Create schema with permissions middleware
+    const schema = makeExecutableSchema({ typeDefs, resolvers });
+    const schemaWithMiddleware = applyMiddleware(schema, permissions);
+    
+    const app = express();
+    const httpServer = http.createServer(app);
+    
+    // Add request logging
+    app.use(requestLogger);
+    
+    // Create Apollo Server
+    const server = new ApolloServer<MyContext>({
+      schema: schemaWithMiddleware,
+      plugins: [
+        ApolloServerPluginDrainHttpServer({ httpServer }),
+        {
+          async requestDidStart() {
+            return {
+              async didEncounterErrors({ errors }) {
+                errors.forEach(error => {
+                  logger.error('GraphQL Error:', {
+                    message: error.message,
+                    path: error.path,
+                    extensions: error.extensions,
+                  });
+                });
+              },
+            };
+          },
+        },
+      ],
+      formatError: (formattedError) => {
+        // Don't expose internal server errors to the client in production
+        if (config.nodeEnv === 'production' && 
+            formattedError.extensions?.code === 'INTERNAL_SERVER_ERROR') {
+          return {
+            message: 'Internal server error',
+            extensions: {
+              code: 'INTERNAL_SERVER_ERROR',
+            },
+          };
+        }
+        return formattedError;
       },
-    })
-  );
-  
-  await new Promise<void>(resolve => 
-    httpServer.listen({ port: config.port }, resolve)
-  );
-  
-  console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`);
+    });
+    
+    await server.start();
+    
+    app.use(cors());
+    app.use(express.json());
+    app.get('/health', (_, res) => {
+      res.status(200).send('OK');
+    });
+    
+    app.use('/graphql', 
+      express.json(),
+      cors(),
+      // @ts-ignore - Ignoring type issues with Express middleware
+      expressMiddleware(server, {
+        context: async ({ req }: any) => {
+          // Get the user from the token
+          const user = getUser(req);
+          
+          // Add the user to the context
+          return { user };
+        },
+      })
+    );
+    
+    await new Promise<void>(resolve => 
+      httpServer.listen({ port: config.port }, resolve)
+    );
+    
+    logger.info(`🚀 Server ready at http://localhost:${config.port}/graphql`);
+  } catch (err) {
+    logger.error('Failed to start server:', err);
+    process.exit(1);
+  }
 }
 
 startServer().catch(err => {
-  console.error('Failed to start server:', err);
+  logger.error('Failed to start server:', err);
   process.exit(1);
 });
 
+// Handle graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, shutting down gracefully');
+  logger.info('SIGTERM received, shutting down gracefully');
   await disconnectRedis();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-  console.log('SIGINT received, shutting down gracefully');
+  logger.info('SIGINT received, shutting down gracefully');
   await disconnectRedis();
   process.exit(0);
 });
