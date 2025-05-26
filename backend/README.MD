@@ -16,12 +16,6 @@ Menu:
 13. Dockerize Backend
 14. Implement CI/CD
 
-Pending:
-14. Move to Frontend
-- Set up Next.js project
-- Implement Apollo Client
-- Create core components and layouts using shadcn/ui
-
 ## 1. Setup
 
 1. First we'll create folders

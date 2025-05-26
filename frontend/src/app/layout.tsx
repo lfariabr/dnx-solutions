@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ApolloProvider } from "@/lib/apollo/ApolloProvider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/lib/auth/AuthContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -26,7 +27,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ApolloProvider>
-            {children}
+            <AuthProvider>
+              {children}
+            </AuthProvider>
           </ApolloProvider>
         </ThemeProvider>
       </body>

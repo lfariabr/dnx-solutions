@@ -114,17 +114,22 @@ export const permissions = shield(
     fallbackError: (error: any) => {
       console.log('Shield error:', error);
       
-      // Handle Zod validation errors
-      if (error && error.originalError && error.originalError.name === 'ZodError') {
-        return new Error(error.originalError.issues[0].message);
-      }
+    //   // Handle Zod validation errors
+    //   if (error && error.originalError && error.originalError.name === 'ZodError') {
+    //     return new Error(error.originalError.issues[0].message);
+    //   }
       
-      // Handle regular errors
-      if (error instanceof Error) {
-        return new Error(error.message);
-      }
+    //   // Handle regular errors
+    //   if (error instanceof Error) {
+    //     return new Error(error.message);
+    //   }
       
-      return new Error('An unknown error occurred');
-    },
+    //   return new Error('An unknown error occurred');
+    // },
+    console.error('SHIELD ERROR DETAILS:', error);
+    return error instanceof Error 
+    ? error 
+    : new Error(error?.message || 'Permission denied');
+}
   }
 );
