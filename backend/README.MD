@@ -152,3 +152,103 @@ mkdir src/resolvers/articles
 mkdir src/resolvers/users
 
 ## Implement authentication with JWT
+1. Created user resolvers:
+   - User queries (`src/resolvers/users/queries.ts`)
+   - User mutations (`src/resolvers/users/mutations.ts`)
+
+2. Implemented authentication middleware (`src/middleware/auth.ts`):
+   - JWT token verification
+   - User extraction from token
+   - Role-based access control
+
+3. Added authentication context to Apollo Server:
+   - User information available in resolvers
+   - Protected mutations requiring authentication
+
+4. Created auth utilities (`src/utils/authUtils.ts`):
+   - Helper functions to check authentication
+   - Helper functions to check role permissions
+
+5. Updated project and article mutations to require admin authentication
+
+Authentication flow:
+1. User registers with name, email, and password
+2. Password is hashed before saving to the database
+3. User logs in with email and password
+4. Server verifies credentials and returns a JWT token
+5. Client includes the token in the Authorization header for authenticated requests
+6. Server verifies the token and adds the user to the context
+7. Resolvers check the context for authentication and permissions
+
+Testing authentication:
+- Register a user: mutation { register(input: { name: "Admin User", email: "luis@luis.com", password: "xxxxxxx" }) { token user { id name email } } }
+- Login: mutation { login(input: { email: "test@test.com", password: "test" }) { token user { id name email } } }
+- Use the token in the HTTP headers: { "Authorization": "Bearer YOUR_TOKEN_HERE" }
+EOF
+
+## Testing endpoints and auth
+1. Registering an admin User
+```
+mutation RegisterAdmin {
+  register(input: {
+    name: "Admin User"
+    email: "admin@example.com"
+    password: "securePassword123"
+  }) {
+    token
+    user {
+      id
+      name
+      email
+      role
+      createdAt
+    }
+  }
+}
+```
+
+2. Registering a normal user
+```
+mutation RegisterUser {
+  register(input: {
+    name: "Regular User"
+    email: "user@example.com"
+    password: "userPassword123"
+  }) {
+    token
+    user {
+      id
+      name
+      email
+      role
+      createdAt
+    }
+  }
+}
+```
+
+3. Create a script to convert a user to admin
+backend/src/scripts/makeAdmin.ts
+```
+npx ts-node src/scripts/makeAdmin.ts admin@example.com
+```
+
+4. Login as admin 
+```
+query Me {
+  me {
+    id
+    name
+    email
+    role
+    lastLogin
+  }
+}
+```
+
+Then, in Apollo Explorer:
+Click on "Headers" at the bottom of the screen
+Add a header:
+```
+{ "Authorization": "Bearer YOUR_TOKEN_HERE" }
+```
