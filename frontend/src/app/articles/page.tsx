@@ -6,7 +6,36 @@ import { Article } from "@/lib/graphql/types/article.types";
 import { AlertCircle, Calendar, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
-import { format } from "date-fns";
+import { format, formatDistanceToNow, parseISO, isValid } from "date-fns";
+
+// Format date safely with fallback
+const formatDateSafe = (dateString: string, formatType: 'distance' | 'full' = 'full') => {
+  try {
+    // First try to parse the ISO string
+    const date = parseISO(dateString);
+    
+    // Check if the result is a valid date
+    if (isValid(date)) {
+      return formatType === 'distance' 
+        ? `${formatDistanceToNow(date)} ago` 
+        : format(date, 'MMMM d, yyyy');
+    }
+    
+    // If it's not a valid ISO date, try direct Date constructor
+    const fallbackDate = new Date(dateString);
+    if (isValid(fallbackDate)) {
+      return formatType === 'distance' 
+        ? `${formatDistanceToNow(fallbackDate)} ago` 
+        : format(fallbackDate, 'MMMM d, yyyy');
+    }
+    
+    // If all parsing fails, return a fallback
+    return formatType === 'distance' ? 'recently' : 'Recently published';
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return formatType === 'distance' ? 'recently' : 'Recently published';
+  }
+};
 
 export default function ArticlesPage() {
   const { articles, loading, error } = usePublishedArticles();
@@ -50,7 +79,7 @@ export default function ArticlesPage() {
 
         {/* Articles list */}
         {!loading && !error && articles.length > 0 && (
-          <div className="grid grid-cols-1 gap-8">
+          <div className="space-y-10">
             {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
@@ -62,13 +91,10 @@ export default function ArticlesPage() {
 }
 
 function ArticleCard({ article }: { article: Article }) {
-  // Format the date
-  const formattedDate = format(new Date(article.createdAt), 'MMMM d, yyyy');
-  
   // Create a preview of the content
-  const contentPreview = article.content.length > 200
+  const contentPreview = article.excerpt || (article.content.length > 200
     ? `${article.content.substring(0, 200)}...`
-    : article.content;
+    : article.content);
 
   return (
     <div className="group border-b pb-8 last:border-b-0">
@@ -84,27 +110,39 @@ function ArticleCard({ article }: { article: Article }) {
         )}
         
         {/* Article content */}
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
-            <Link href={`/articles/${article.id}`}>
+        <div className="w-full md:w-2/3 space-y-4">
+          <Link href={`/articles/${article.id}`} className="block">
+            <h2 className="text-2xl font-semibold hover:text-primary transition-colors">
               {article.title}
-            </Link>
-          </h2>
+            </h2>
+          </Link>
           
-          <div className="flex items-center text-sm text-muted-foreground mb-3">
+          <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
-            <span>{formattedDate}</span>
+            <span>{formatDateSafe(article.createdAt)}</span>
           </div>
           
-          <p className="text-muted-foreground mb-4">
-            {contentPreview}
-          </p>
+          <p className="text-muted-foreground">{contentPreview}</p>
+          
+          {/* Display tags if available */}
+          {article.tags && article.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {article.tags.map((tag, index) => (
+                <span 
+                  key={index}
+                  className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
           
           <Link 
             href={`/articles/${article.id}`}
-            className="text-sm font-medium text-primary hover:underline"
+            className="inline-block text-sm font-medium text-primary hover:underline"
           >
-            Read more →
+            Read more
           </Link>
         </div>
       </div>

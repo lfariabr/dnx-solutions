@@ -7,6 +7,8 @@ export const ARTICLE_FRAGMENT = gql`
     title
     content
     imageUrl
+    excerpt
+    tags
     published
     createdAt
     updatedAt

@@ -1,17 +1,12 @@
 import { useQuery } from '@apollo/client';
-import { GET_ARTICLES, GET_PUBLISHED_ARTICLES, GET_ARTICLE } from '../graphql/queries/article.queries';
-import { 
-  ArticlesData, 
-  PublishedArticlesData, 
-  ArticleData, 
-  ArticleVars 
-} from '../graphql/types/article.types';
+import { GET_ARTICLES, GET_ARTICLE, GET_PUBLISHED_ARTICLES } from '../graphql/queries/article.queries';
+import { Article, ArticleData, ArticlesData, PublishedArticlesData } from '../graphql/types/article.types';
 
 /**
- * Hook to fetch all articles (both published and unpublished)
- * Only admin users should be able to see unpublished articles
+ * Hook for fetching all articles (including unpublished)
+ * Intended for admin use
  */
-export function useArticles() {
+export const useArticles = () => {
   const { data, loading, error } = useQuery<ArticlesData>(GET_ARTICLES);
   
   return {
@@ -19,13 +14,13 @@ export function useArticles() {
     loading,
     error: error?.message
   };
-}
+};
 
 /**
- * Hook to fetch only published articles
- * This is safe to use for public-facing pages
+ * Hook for fetching only published articles
+ * Intended for public-facing pages
  */
-export function usePublishedArticles() {
+export const usePublishedArticles = () => {
   const { data, loading, error } = useQuery<PublishedArticlesData>(GET_PUBLISHED_ARTICLES);
   
   return {
@@ -33,22 +28,21 @@ export function usePublishedArticles() {
     loading,
     error: error?.message
   };
-}
+};
 
 /**
- * Hook to fetch a single article by ID
- * @param id The ID of the article to fetch
+ * Hook for fetching a single article by ID
  */
-export function useArticle(id: string) {
-  const { data, loading, error } = useQuery<ArticleData, ArticleVars>(
-    GET_ARTICLE,
-    { variables: { id } }
-  );
+export const useArticle = (id: string) => {
+  const { data, loading, error } = useQuery<ArticleData>(GET_ARTICLE, {
+    variables: { id },
+    skip: !id
+  });
   
   return {
-    article: data?.article,
+    article: data?.article || null,
     loading,
     error: error?.message,
     notFound: !loading && !error && !data?.article
   };
-}
+};
