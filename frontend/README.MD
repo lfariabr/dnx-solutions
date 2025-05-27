@@ -13,8 +13,10 @@ Pages:
 5. Admin Dashboard
 - Admin area (to add, edit, delete projects, articles, users)
 - My profile / to change password, update profile, see chatbot history
-6. Relay Compiler for efficient data fetching
-7. AWS setup for file storage and data storage
+6. Login, Logout and Register test with credentials
+7. Admin functionalities: manage projects, manage articles, manage users
+8. Relay Compiler for efficient data fetching
+9. AWS setup for file storage and data storage
 
 Done:
 1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot
@@ -162,6 +164,7 @@ Replace placeholder data with actual API queries
 3. We created admin middleware in src/middleware.ts
 
 ## 6. Login with admin credentials
+We tested login with admin credentials
 - Navigate to /admin to access the dashboard
 - Check that statistics are loading correctly
 a. Dual Storage Strategy: Tokens are now stored in both localStorage (for client components) and cookies (for middleware/server components): 
@@ -170,15 +173,16 @@ npm install jwt-decode
 b. Proper Role Validation: The middleware now properly verifies admin roles by decoding the JWT token
 c. Improved Error Handling: Better error messages and fallback mechanisms make debugging easier
 
-What's Next?
-To complete your portfolio management system:
+## 7. Admin functionalities
 
-Project Management:
-Implement forms for creating/editing projects
-Add project deletion functionality
-Article Management:
-Create article editor with rich text support
-Implement publishing/unpublishing functionality
-User Management:
-Create user list view
-Add role management capabilities
+a. Project Management:
+- Implement forms for creating/editing projects
+- Add project deletion functionality
+
+b. Article Management:
+- Create article editor with rich text support
+- Implement publishing/unpublishing functionality
+
+c. User Management:
+- Create user list view
+- Add role management capabilities

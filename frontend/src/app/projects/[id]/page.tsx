@@ -1,16 +1,50 @@
 'use client';
 
+import React from "react";
 import { MainLayout } from "@/components/layouts/MainLayout";
 import { useProject } from "@/lib/hooks/useProjects";
 import { AlertCircle, ArrowLeft, Calendar, Github, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid } from "date-fns";
 import { notFound } from "next/navigation";
 
-export default function ProjectDetailPage({ params }: { params: { id: string } }) {
-  const { project, loading, error, notFound: projectNotFound } = useProject(params.id);
+interface ProjectDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+// Format date safely with fallback
+const formatDateSafe = (dateString: string) => {
+  try {
+    // First try to parse the ISO string
+    const date = parseISO(dateString);
+    
+    // Check if the result is a valid date
+    if (isValid(date)) {
+      return `${formatDistanceToNow(date)} ago`;
+    }
+    
+    // If it's not a valid ISO date, try direct Date constructor
+    const fallbackDate = new Date(dateString);
+    if (isValid(fallbackDate)) {
+      return `${formatDistanceToNow(fallbackDate)} ago`;
+    }
+    
+    // If all parsing fails, return a fallback
+    return 'recently';
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return 'recently';
+  }
+};
+
+export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
+  // Properly unwrap params with React.use() for Next.js 15
+  const resolvedParams = React.use(params);
+  const { id } = resolvedParams;
+
+  const { project, loading, error, notFound: projectNotFound } = useProject(id);
   
   // If project not found, show 404
   if (projectNotFound) {
@@ -19,69 +53,83 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
 
   return (
     <MainLayout>
-      <div className="container py-12 max-w-4xl">
-        {/* Loading state */}
-        {loading && (
-          <div className="flex justify-center items-center py-20">
+      <div className="container py-8">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="mt-2 text-muted-foreground">Loading project...</p>
           </div>
-        )}
-
-        {/* Error state */}
-        {error && (
+        ) : error ? (
           <Alert variant="destructive" className="my-8">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               Error loading project: {error}
             </AlertDescription>
           </Alert>
-        )}
-
-        {/* Project details */}
-        {!loading && !error && project && (
-          <>
-            <div className="mb-6">
-              <Link href="/projects" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+        ) : project ? (
+          <div className="space-y-8">
+            <Button variant="outline" size="sm" asChild className="mb-4">
+              <Link href="/projects" className="flex items-center gap-1">
+                <ArrowLeft className="h-4 w-4" />
                 Back to Projects
               </Link>
-              
-              <h1 className="text-4xl font-bold tracking-tight mt-2">{project.title}</h1>
-              
-              <div className="flex items-center mt-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4 mr-1" />
-                <span>Updated {formatDistanceToNow(new Date(project.updatedAt))} ago</span>
-              </div>
+            </Button>
+            
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight">{project.title}</h1>
+              <p className="text-muted-foreground mt-2 flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                Last updated {formatDateSafe(project.updatedAt)}
+              </p>
             </div>
-
-            {/* Project image */}
+            
             {project.imageUrl && (
-              <div className="relative w-full rounded-lg overflow-hidden mb-8">
-                <div 
-                  className="aspect-video w-full bg-cover bg-center" 
-                  style={{ backgroundImage: `url(${project.imageUrl})` }}
+              <div className="overflow-hidden rounded-lg border">
+                <img 
+                  src={project.imageUrl} 
+                  alt={project.title} 
+                  className="w-full h-auto object-cover max-h-[400px]"
                 />
               </div>
             )}
-
-            {/* Description */}
-            <div className="prose dark:prose-invert max-w-none mb-8">
-              <p className="text-lg">{project.description}</p>
+            
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold">About this project</h2>
+              <div className="prose prose-stone dark:prose-invert">
+                <p>{project.description}</p>
+              </div>
             </div>
-
-            {/* Action buttons */}
-            <div className="flex flex-wrap gap-4 mt-8">
-              {project.githubUrl && (
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="gap-2">
+            
+            {project.technologies && project.technologies.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-semibold">Technologies</h2>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech, i) => (
+                    <div key={i} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm">
+                      {tech}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {project.githubUrl && (
+              <div className="pt-4">
+                <Button variant="outline" asChild>
+                  <a 
+                    href={project.githubUrl} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
                     <Github className="h-4 w-4" />
                     View on GitHub
-                  </Button>
-                </a>
-              )}
-            </div>
-          </>
-        )}
+                  </a>
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : null}
       </div>
     </MainLayout>
   );

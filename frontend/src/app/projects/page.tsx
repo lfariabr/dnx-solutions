@@ -3,10 +3,10 @@
 import { MainLayout } from "@/components/layouts/MainLayout";
 import { useProjects } from "@/lib/hooks/useProjects";
 import { Project } from "@/lib/graphql/types/project.types";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, Calendar } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid } from "date-fns";
 
 export default function ProjectsPage() {
   const { projects, loading, error } = useProjects();
@@ -61,6 +61,31 @@ export default function ProjectsPage() {
   );
 }
 
+// Format date safely with fallback
+const formatDateSafe = (dateString: string) => {
+  try {
+    // First try to parse the ISO string
+    const date = parseISO(dateString);
+    
+    // Check if the result is a valid date
+    if (isValid(date)) {
+      return `${formatDistanceToNow(date)} ago`;
+    }
+    
+    // If it's not a valid ISO date, try direct Date constructor
+    const fallbackDate = new Date(dateString);
+    if (isValid(fallbackDate)) {
+      return `${formatDistanceToNow(fallbackDate)} ago`;
+    }
+    
+    // If all parsing fails, return a fallback
+    return 'recently';
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return 'recently';
+  }
+};
+
 function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="group rounded-lg border overflow-hidden bg-card text-card-foreground shadow hover:shadow-lg transition-all">
@@ -86,7 +111,8 @@ function ProjectCard({ project }: { project: Project }) {
         </p>
         
         <div className="flex items-center text-sm text-muted-foreground mb-4">
-          <span>Updated {formatDistanceToNow(new Date(project.updatedAt))} ago</span>
+          <Calendar className="h-4 w-4 mr-1" />
+          <span>Updated {formatDateSafe(project.updatedAt)}</span>
         </div>
         
         <div className="flex gap-3 mt-4">
@@ -100,13 +126,28 @@ function ProjectCard({ project }: { project: Project }) {
               GitHub
             </a>
           )}
+          
           <Link 
             href={`/projects/${project.id}`}
-            className="text-sm font-medium hover:underline ml-auto"
+            className="text-sm font-medium text-primary hover:underline"
           >
-            View Details →
+            View Details
           </Link>
         </div>
+        
+        {/* Technology tags */}
+        {project.technologies && project.technologies.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+            {project.technologies.map((tech, i) => (
+              <span 
+                key={i}
+                className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
