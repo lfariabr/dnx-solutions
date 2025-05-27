@@ -1,54 +1,16 @@
+'use client';
+
 import { MainLayout } from "@/components/layouts/MainLayout";
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  tags: string[];
-  githubUrl?: string;
-  demoUrl?: string;
-}
-
-// Placeholder data - will be replaced with GraphQL queries
-const PROJECTS: Project[] = [
-  {
-    id: "1",
-    title: "Portfolio Website",
-    description: "A modern portfolio website built with Next.js, GraphQL, and MongoDB.",
-    imageUrl: "/images/projects/portfolio.jpg",
-    tags: ["Next.js", "GraphQL", "MongoDB", "TailwindCSS"],
-    githubUrl: "https://github.com/yourusername/portfolio",
-    demoUrl: "https://yourportfolio.com"
-  },
-  {
-    id: "2",
-    title: "E-commerce Platform",
-    description: "A full-featured e-commerce platform with product management, cart functionality, and payment processing.",
-    imageUrl: "/images/projects/ecommerce.jpg",
-    tags: ["React", "Node.js", "Stripe", "Redux"],
-    githubUrl: "https://github.com/yourusername/ecommerce",
-    demoUrl: "https://yourecommerce.com"
-  },
-  {
-    id: "3",
-    title: "AI-powered Task Manager",
-    description: "A task management application that uses AI to prioritize and categorize tasks.",
-    imageUrl: "/images/projects/taskmanager.jpg",
-    tags: ["Python", "TensorFlow", "React", "FastAPI"],
-    githubUrl: "https://github.com/yourusername/taskmanager"
-  },
-  {
-    id: "4",
-    title: "Blockchain Voting System",
-    description: "A secure voting system built on blockchain technology to ensure transparency and security.",
-    imageUrl: "/images/projects/blockchain.jpg",
-    tags: ["Ethereum", "Solidity", "Web3.js", "React"],
-    githubUrl: "https://github.com/yourusername/blockvote"
-  }
-];
+import { useProjects } from "@/lib/hooks/useProjects";
+import { Project } from "@/lib/graphql/types/project.types";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 
 export default function ProjectsPage() {
+  const { projects, loading, error } = useProjects();
+
   return (
     <MainLayout>
       <div className="container py-12 max-w-6xl">
@@ -59,66 +21,93 @@ export default function ProjectsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {PROJECTS.map((project) => (
-            <div 
-              key={project.id}
-              className="group rounded-lg border overflow-hidden bg-card text-card-foreground shadow hover:shadow-lg transition-all"
-            >
-              <div className="aspect-video w-full bg-muted relative overflow-hidden">
-                {/* Placeholder for project image */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-background/80 flex items-center justify-center text-2xl font-bold">
-                  {project.title}
-                </div>
-              </div>
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-2">{project.title}</h2>
-                <p className="text-muted-foreground mb-4">{project.description}</p>
-                
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.map((tag) => (
-                    <span 
-                      key={tag} 
-                      className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                
-                <div className="flex gap-3 mt-4">
-                  {project.githubUrl && (
-                    <a 
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium hover:underline"
-                    >
-                      GitHub
-                    </a>
-                  )}
-                  {project.demoUrl && (
-                    <a 
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium hover:underline"
-                    >
-                      Live Demo
-                    </a>
-                  )}
-                  <a 
-                    href={`/projects/${project.id}`}
-                    className="text-sm font-medium hover:underline ml-auto"
-                  >
-                    View Details →
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Loading state */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && (
+          <Alert variant="destructive" className="my-8">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Error loading projects: {error}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && projects.length === 0 && (
+          <div className="text-center py-20">
+            <h3 className="text-lg font-semibold mb-2">No projects found</h3>
+            <p className="text-muted-foreground">
+              Projects will appear here once they are added.
+            </p>
+          </div>
+        )}
+
+        {/* Projects grid */}
+        {!loading && !error && projects.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        )}
       </div>
     </MainLayout>
+  );
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <div className="group rounded-lg border overflow-hidden bg-card text-card-foreground shadow hover:shadow-lg transition-all">
+      <div className="aspect-video w-full bg-muted relative overflow-hidden">
+        {/* Project image or placeholder */}
+        {project.imageUrl ? (
+          <div 
+            className="absolute inset-0 bg-cover bg-center" 
+            style={{ backgroundImage: `url(${project.imageUrl})` }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-background/80 flex items-center justify-center text-2xl font-bold">
+            {project.title}
+          </div>
+        )}
+      </div>
+      <div className="p-6">
+        <h2 className="text-xl font-semibold mb-2">{project.title}</h2>
+        <p className="text-muted-foreground mb-4">
+          {project.description.length > 150
+            ? `${project.description.substring(0, 150)}...`
+            : project.description}
+        </p>
+        
+        <div className="flex items-center text-sm text-muted-foreground mb-4">
+          <span>Updated {formatDistanceToNow(new Date(project.updatedAt))} ago</span>
+        </div>
+        
+        <div className="flex gap-3 mt-4">
+          {project.githubUrl && (
+            <a 
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium hover:underline"
+            >
+              GitHub
+            </a>
+          )}
+          <Link 
+            href={`/projects/${project.id}`}
+            className="text-sm font-medium hover:underline ml-auto"
+          >
+            View Details →
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

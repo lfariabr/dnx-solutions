@@ -98,7 +98,7 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link href="/profile">Profile</Link>
                 </DropdownMenuItem>
-                {user?.role === 'ADMIN' && (
+                {user?.role === 'admin' && (
                   <DropdownMenuItem asChild>
                     <Link href="/admin">Admin Dashboard</Link>
                   </DropdownMenuItem>

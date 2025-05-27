@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { gql, useMutation, ApolloError } from '@apollo/client';
+import Cookies from 'js-cookie';
 
 // GraphQL Mutations
 const LOGIN_MUTATION = gql`
@@ -44,7 +45,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'USER' | 'ADMIN';
+  role: 'user' | 'admin';
 }
 
 interface AuthContextType {
@@ -53,38 +54,20 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterInput) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
-}
-
-export interface RegisterInput {
-  email: string;
-  password: string;
-  name: string;
-}
-
-export interface LoginInput {
-  email: string;
-  password: string;
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Helper to extract the most useful error message from GraphQL errors
-const getErrorMessage = (error: ApolloError | Error | unknown): string => {
+// Helper function to format error messages
+const formatError = (error: unknown): string => {
   if (error instanceof ApolloError) {
-    // Try to find the most specific error message
-    const graphQLErrors = error.graphQLErrors;
-    if (graphQLErrors && graphQLErrors.length > 0) {
-      // Get the innermost error message if available
-      const firstError = graphQLErrors[0];
-      if (firstError.extensions?.exception?.message) {
-        return firstError.extensions.exception.message;
-      }
-      return firstError.message || 'GraphQL error occurred';
+    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+      return error.graphQLErrors[0].message;
     }
     
     if (error.networkError) {
@@ -111,6 +94,14 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
 });
 
+// Cookie options for security
+const cookieOptions = {
+  expires: 7, // 7 days
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  path: '/'
+};
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -125,15 +116,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const loadUserFromLocalStorage = () => {
       try {
-        const storedToken = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+        // First try to get from cookies (for SSR compatibility)
+        let storedToken = Cookies.get('token');
+        let storedUser: string | null = null;
         
+        // If not in cookies, fall back to localStorage
+        if (!storedToken) {
+          storedToken = localStorage.getItem('token');
+          storedUser = localStorage.getItem('user');
+        } else {
+          storedUser = localStorage.getItem('user');
+        }
+        
+        // If we have data, set the state
         if (storedToken && storedUser) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
+          
+          // Ensure token is stored in both places
+          Cookies.set('token', storedToken, cookieOptions);
+          localStorage.setItem('token', storedToken);
         }
       } catch (err) {
-        console.error('Failed to load user data from localStorage', err);
+        console.error('Failed to load user data from storage', err);
       } finally {
         setLoading(false);
       }
@@ -158,46 +163,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(data.login.user);
         setToken(data.login.token);
         
-        // Store in localStorage
+        // Store in both localStorage and cookies
         localStorage.setItem('token', data.login.token);
         localStorage.setItem('user', JSON.stringify(data.login.user));
+        Cookies.set('token', data.login.token, cookieOptions);
         
         router.push('/');
       }
-    } catch (err: any) {
-      const errorMessage = getErrorMessage(err);
-      setError(errorMessage);
+    } catch (err) {
       console.error('Login error:', err);
+      setError(formatError(err));
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (registerData: RegisterInput) => {
+  const register = async (name: string, email: string, password: string) => {
     setLoading(true);
     setError(null);
     
     try {
-      console.log('Register attempt with:', { email: registerData.email, name: registerData.name });
-      
       const { data } = await registerMutation({
-        variables: { input: registerData },
+        variables: { 
+          input: { name, email, password }
+        },
       });
       
       if (data?.register) {
         setUser(data.register.user);
         setToken(data.register.token);
         
-        // Store in localStorage
+        // Store in both localStorage and cookies
         localStorage.setItem('token', data.register.token);
         localStorage.setItem('user', JSON.stringify(data.register.user));
+        Cookies.set('token', data.register.token, cookieOptions);
         
         router.push('/');
       }
-    } catch (err: any) {
-      const errorMessage = getErrorMessage(err);
-      setError(errorMessage);
+    } catch (err) {
       console.error('Registration error:', err);
+      setError(formatError(err));
     } finally {
       setLoading(false);
     }
@@ -206,8 +211,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = () => {
     setUser(null);
     setToken(null);
+    
+    // Clear from both localStorage and cookies
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    Cookies.remove('token');
+    
     router.push('/login');
   };
 
@@ -221,7 +230,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         login,
         register,
         logout,
-        isAuthenticated: !!user && !!token,
+        isAuthenticated: !!token,
       }}
     >
       {children}

@@ -1,29 +1,27 @@
 # Frontend documentation
 
 Menu:
-1. Set up Next.js project - done
-2. Implement Apollo Client - done
-3. Create core components and layouts using shadcn/ui - done
-4. Login/Register - done
-5. Projects - pending
-6. Articles - pending
-7. Chatbot - pending
-8. Dashboard / Admin area (to add, edit, delete projects, articles, users) - pending
-9. My profile / to change password, update profile, see chatbot history - pending
-10. Logout - pending
-11. Relay Compiler for efficient data fetching - pending
-12. AWS setup for file storage and data storage - pending
+1. Set up Next.js project
+2. Implement Apollo Client
+3. Create core components and layouts using shadcn/ui
+Pages:
+- Login/Register/Logout
+- Projects
+- Articles
+- Chatbot
+4. GraphQL Integration: actual API queries on the pages
+5. Admin Dashboard
+- Admin area (to add, edit, delete projects, articles, users)
+- My profile / to change password, update profile, see chatbot history
+6. Relay Compiler for efficient data fetching
+7. AWS setup for file storage and data storage
 
 Done:
 1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot
 2. Set Up Authentication: Connect to your backend authentication endpoints
 
 Pending:
-3. GraphQL Integration: Create specific queries and mutations to fetch data from your backend
-GraphQL Integration: Replace placeholder data with actual API queries
-Detail Pages: Create individual project and article detail pages
 4. Admin Dashboard: Set up the admin interface for content management
-Admin Dashboard: Build the admin interface for content management
 
 Style:
 - Use shadcn/ui for components
@@ -149,3 +147,38 @@ Create src/app/(auth)/register/page.tsx
 6. Added comprehensive error handling for better dev experience
 
 7. Added AuthProvider to wrap the app
+
+## 4. GraphQL Integration: Create specific queries and mutations to fetch data from backend
+Replace placeholder data with actual API queries
+
+1. We created queries for projects/articles, featured projects/articles, and a single project/article in src/lib/hooks/useProjects.ts and src/lib/hooks/useArticles.ts
+2. We created graphql queries/fragments in src/graphql/queries/projects and src/graphql/queries/articles
+3. We created Typescript interface for project data in src/lib/graphql/types/project.types.ts and src/lib/graphql/types/article.types.ts
+4. We created page listing with all projects/articles in src/app/projects/page.tsx and src/app/articles/page.tsx
+
+## 5. Admin Dashboard
+1. We created admin layout in src/app/admin/layout.tsx
+2. We created admin page in src/app/admin/page.tsx
+3. We created admin middleware in src/middleware.ts
+
+## 6. Login with admin credentials
+- Navigate to /admin to access the dashboard
+- Check that statistics are loading correctly
+a. Dual Storage Strategy: Tokens are now stored in both localStorage (for client components) and cookies (for middleware/server components): 
+npm install js-cookie @types/js-cookie
+npm install jwt-decode
+b. Proper Role Validation: The middleware now properly verifies admin roles by decoding the JWT token
+c. Improved Error Handling: Better error messages and fallback mechanisms make debugging easier
+
+What's Next?
+To complete your portfolio management system:
+
+Project Management:
+Implement forms for creating/editing projects
+Add project deletion functionality
+Article Management:
+Create article editor with rich text support
+Implement publishing/unpublishing functionality
+User Management:
+Create user list view
+Add role management capabilities
