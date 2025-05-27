@@ -12,7 +12,7 @@ import { gql, useMutation, ApolloError } from '@apollo/client';
 import Cookies from 'js-cookie';
 import { UserRole } from '../graphql/types/user.types';
 
-// GraphQL Mutations
+// GraphQL Mutations  
 const LOGIN_MUTATION = gql`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
@@ -160,54 +160,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
-    
+  
     try {
       console.log('Login attempt with:', { email });
-      const { data } = await loginMutation({
-        variables: { 
+      const { data, errors } = await loginMutation({
+        variables: {
           input: { email, password }
         },
+        errorPolicy: 'all'  // ✅ This is crucial!
       });
-      
+  
+      // ✅ Check if login was successful
       if (data?.login) {
         setUser(data.login.user);
         setToken(data.login.token);
-        
+  
         // Store in both localStorage and cookies
         localStorage.setItem('token', data.login.token);
         localStorage.setItem('user', JSON.stringify(data.login.user));
         Cookies.set('token', data.login.token, cookieOptions);
-        
+  
         router.push('/');
+      } else {
+        // ✅ Login failed, show the first GraphQL error if available
+        const errorMessage =
+          errors?.[0]?.message || 'Login failed. Please try again.';
+        setError(errorMessage);
+        console.warn('[Login Error]', errorMessage);
       }
     } catch (err) {
-      // Detailed error logging
-      console.error('Login error:', err);
-      console.log('Error type:', Object.prototype.toString.call(err));
-      console.log('Error properties:', Object.keys(err));
-      
-      if (err.graphQLErrors) {
-        console.log('GraphQL Errors:', JSON.stringify(err.graphQLErrors, null, 2));
-      }
-      
-      if (err.networkError) {
-        console.log('Network Error:', err.networkError);
-      }
-      
-      // Try multiple approaches to extract the error message
-      let errorMessage = 'An error occurred during login';
-      
-      if (err.graphQLErrors && err.graphQLErrors.length > 0) {
-        errorMessage = err.graphQLErrors[0].message;
-        console.log('Using GraphQL error message:', errorMessage);
-      } else if (err.message) {
-        errorMessage = err.message;
-        console.log('Using error.message:', errorMessage);
-      }
-      
-      // Set the error and log confirmation
-      setError(errorMessage);
-      console.log('Error state set to:', errorMessage);
+      // ✅ Catch network or unexpected errors
+      const formatted = formatError(err);
+      setError(formatted);
+      console.error('[Login Exception]', formatted);
     } finally {
       setLoading(false);
     }

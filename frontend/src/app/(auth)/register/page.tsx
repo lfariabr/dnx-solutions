@@ -98,7 +98,7 @@ export default function RegisterPage() {
               </p>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 mb-4">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
@@ -110,7 +110,7 @@ export default function RegisterPage() {
             </div>
           </CardContent>
           
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 pt-2">
             <Button 
               type="submit" 
               className="w-full" 
@@ -133,6 +133,14 @@ export default function RegisterPage() {
                 className="font-medium text-primary hover:underline"
               >
                 Login
+              </Link>
+              
+              <div className="h-4" />
+              <Link 
+                href="/"
+                className="font-medium hover:underline text-[#25D366]"
+              >
+                Back to homepage
               </Link>
             </div>
           </CardFooter>

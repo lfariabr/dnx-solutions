@@ -18,8 +18,8 @@ Pages:
 8. Frontend Adjustments:
 - Layout with some left padding on home
 - Button not appearing on "Actions"
+- Login/Register pages improvements
 - Error message on forms not appearing
-- Navbar appear on login/register pages?
 
 9. Relay Compiler for efficient data fetching
 10. AWS setup for file storage and data storage
