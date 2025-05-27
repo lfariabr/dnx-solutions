@@ -7,12 +7,13 @@ export function Footer() {
   
   return (
     <footer className="border-t bg-background/95">
-      <div className="container py-8">
+      {/* <div className="container py-8 px-4 md:px-6"> */}
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 py-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="space-y-3">
             <h3 className="text-lg font-medium">Luis Faria</h3>
             <p className="text-sm text-muted-foreground">
-              Senior Software Engineer specializing in full-stack development with React, Node.js, and modern web technologies.
+              Full-stack Software Engineer specialized in development with Python, TypeScript, React, Node.js, and modern web technologies.
             </p>
           </div>
           
@@ -47,7 +48,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <a 
-                  href="https://github.com/yourusername" 
+                  href="https://github.com/lfariabr" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -57,7 +58,7 @@ export function Footer() {
               </li>
               <li>
                 <a 
-                  href="https://linkedin.com/in/yourusername" 
+                  href="https://linkedin.com/in/lfariabr" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -67,7 +68,7 @@ export function Footer() {
               </li>
               <li>
                 <a 
-                  href="https://twitter.com/yourusername" 
+                  href="https://twitter.com/lfariabr" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -83,10 +84,10 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <a 
-                  href="mailto:your.email@example.com" 
+                  href="mailto:lfariabr@gmail.com" 
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  your.email@example.com
+                  lfariabr@gmail.com
                 </a>
               </li>
               <li className="text-sm text-muted-foreground">
@@ -101,7 +102,7 @@ export function Footer() {
             <p className="text-xs text-muted-foreground">
               {currentYear} Luis Faria. All rights reserved.
             </p>
-            <div className="flex space-x-4 mt-4 sm:mt-0">
+            <div className="flex space-x-6 mt-4 sm:mt-0">
               <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Privacy Policy
               </Link>

@@ -74,21 +74,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     <div className="min-h-screen flex flex-col md:flex-row bg-muted/30">
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-card border-r">
-        <div className="p-4 border-b flex items-center justify-between">
+        <div className="p-6 border-b flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold">Admin Dashboard</h1>
             <p className="text-sm text-muted-foreground">Manage your content</p>
           </div>
         </div>
         
-        <nav className="p-2">
-          <ul className="space-y-1">
+        <nav className="p-4">
+          <ul className="space-y-2">
             {navItems.map((item) => (
               <li key={item.href}>
                 <Link 
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    "flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
                     {
                       "bg-accent text-accent-foreground": 
                         typeof window !== 'undefined' && window.location.pathname === item.href ||
@@ -102,10 +102,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </li>
             ))}
             
-            <li className="mt-6 pt-6 border-t">
+            <li className="mt-8 pt-6 border-t">
               <button 
                 onClick={logout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 Logout
