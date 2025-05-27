@@ -14,9 +14,15 @@ Pages:
 - Admin area (to add, edit, delete projects, articles, users)
 - My profile / to change password, update profile, see chatbot history
 6. Login, Logout and Register test with credentials
-7. Admin functionalities: manage projects, manage articles, manage users
-8. Relay Compiler for efficient data fetching
-9. AWS setup for file storage and data storage
+7. Admin manage content: projects, articles and users
+8. Frontend Adjustments:
+- Layout with some left padding on home
+- Button not appearing on "Actions"
+- Error message on forms not appearing
+- Navbar appear on login/register pages?
+
+9. Relay Compiler for efficient data fetching
+10. AWS setup for file storage and data storage
 
 Done:
 1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot

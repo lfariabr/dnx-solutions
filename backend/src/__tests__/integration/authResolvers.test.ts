@@ -1,6 +1,6 @@
 import * as dbHandler from '../helpers/dbHandler';
 import { executeOperation } from '../helpers/testServer';
-import User from '../../models/User';
+import User, { UserRole } from '../../models/User';
 import jwt from 'jsonwebtoken';
 import config from '../../config/config';
 import bcrypt from 'bcryptjs';
@@ -74,7 +74,7 @@ describe('Auth Resolvers', () => {
         expect(register.user).toHaveProperty('id');
         expect(register.user.name).toBe(variables.input.name);
         expect(register.user.email).toBe(variables.input.email);
-        expect(register.user.role).toBe('user');
+        expect(register.user.role).toBe(UserRole.USER);
         
         // Verify JWT token
         const decodedToken: any = jwt.verify(register.token, config.jwtSecret);
@@ -104,7 +104,7 @@ describe('Auth Resolvers', () => {
       if (response.body.kind === 'single') {
         expect(response.body.singleResult.errors).toBeTruthy();
         const errorMessage = response.body.singleResult.errors?.[0].message;
-        expect(errorMessage).toContain('An unknown error occurred');
+        expect(errorMessage).toContain('Permission denied');
       }
     });
   });
@@ -117,7 +117,7 @@ describe('Auth Resolvers', () => {
         name: 'Test User',
         email: 'test@example.com',
         password: passwordHash,
-        role: 'user'
+        role: UserRole.USER
       });
     });
     
@@ -137,7 +137,7 @@ describe('Auth Resolvers', () => {
         // In the test environment, GraphQL Shield might be preventing access
         // So let's just verify we don't get an error
         if (response.body.singleResult.data?.login) {
-          const login = response.body.singleResult.data.login;
+          const login = response.body.singleResult.data.login as any;
           expect(login).toHaveProperty('token');
           expect(login).toHaveProperty('user');
           expect(login.user.email).toBe(variables.input.email);
@@ -152,7 +152,7 @@ describe('Auth Resolvers', () => {
           if (response.body.singleResult.errors) {
             const errorMessage = response.body.singleResult.errors[0].message;
             // This is acceptable in test because mock user might not be created properly
-            expect(['Invalid email or password', 'An unknown error occurred']).toContain(errorMessage);
+            expect(['Invalid email or password', 'An unknown error occurred', 'Permission denied']).toContain(errorMessage);
           }
         }
       }

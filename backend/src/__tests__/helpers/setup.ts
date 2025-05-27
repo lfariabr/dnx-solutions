@@ -14,3 +14,10 @@ global.console = {
   error: jest.fn(),
   warn: jest.fn(),
 };
+
+// Add a dummy test to avoid "no tests" error
+describe('Setup', () => {
+  it('should have proper test environment variables', () => {
+    expect(process.env.NODE_ENV).toBe('test');
+  });
+});

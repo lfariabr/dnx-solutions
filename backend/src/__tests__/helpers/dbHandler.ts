@@ -34,3 +34,12 @@ export const clearDatabase = async (): Promise<void> => {
     await collection.deleteMany({});
   }
 };
+
+// Add a dummy test to avoid Jest's "no tests" error
+describe('Database Handler', () => {
+  it('should define connection methods', () => {
+    expect(typeof connect).toBe('function');
+    expect(typeof clearDatabase).toBe('function');
+    expect(typeof closeDatabase).toBe('function');
+  });
+});

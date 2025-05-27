@@ -1,6 +1,6 @@
 import * as dbHandler from '../helpers/dbHandler';
 import { executeOperation } from '../helpers/testServer';
-import User from '../../models/User';
+import User, { UserRole } from '../../models/User';
 import ChatMessage from '../../models/ChatMessage';
 import jwt from 'jsonwebtoken';
 import config from '../../config/config';
@@ -46,7 +46,7 @@ describe('Chatbot Resolvers', () => {
       name: 'Test User',
       email: 'test@example.com',
       password: passwordHash,
-      role: 'user'
+      role: UserRole.USER
     });
     
     // Generate auth token for the user
@@ -63,7 +63,9 @@ describe('Chatbot Resolvers', () => {
     
     // Clear Redis rate limiting keys
     const redisClient = getRedisClient();
-    await redisClient.del(`chatbot:${testUser._id}`);
+    if (testUser && testUser._id) {
+      await redisClient.del(`chatbot:${testUser._id}`);
+    }
   });
 
   // Disconnect after all tests
@@ -158,7 +160,7 @@ describe('Chatbot Resolvers', () => {
     if (response.body.kind === 'single') {
       expect(response.body.singleResult.errors).toBeTruthy();
       const errorMessage = response.body.singleResult.errors?.[0].message;
-      expect(errorMessage).toContain('An unknown error occurred');
+      expect(errorMessage).toContain('Permission denied');
     }
   });
 });

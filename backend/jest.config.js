@@ -1,15 +1,22 @@
 module.exports = {
-  preset: '@shelf/jest-mongodb',
-  transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      isolatedModules: true
-    }]
-  },
-  testRegex: '(/__tests__/.*)(test|spec)\\.[jt]sx?$',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  preset: 'ts-jest',
   testEnvironment: 'node',
-  collectCoverage: true,
-  coverageReporters: ['text', 'lcov'],
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  transform: {
+    '^.+\\.ts$': 'ts-jest',
+  },
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,js}',
+    '!src/**/*.d.ts',
+    '!src/index.ts',
+  ],
   coverageDirectory: 'coverage',
-  verbose: true
+  clearMocks: true,
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json',
+    },
+  },
 };

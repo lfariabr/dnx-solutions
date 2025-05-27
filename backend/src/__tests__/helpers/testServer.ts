@@ -46,3 +46,11 @@ export const executeOperation = async (
   await server.stop();
   return response;
 };
+
+// Add a dummy test to avoid Jest's "no tests" error
+describe('Test Server', () => {
+  it('should define server creation and operation functions', () => {
+    expect(typeof createTestServer).toBe('function');
+    expect(typeof executeOperation).toBe('function');
+  });
+});
