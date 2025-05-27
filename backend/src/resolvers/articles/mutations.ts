@@ -3,8 +3,8 @@ import { checkRole } from '../../utils/authUtils';
 
 export const articleMutations = {
   createArticle: async (_: any, { input }: any, context: any) => {
-    // Check if user is admin
-    checkRole(context, 'admin');
+    // Check if user is ADMIN
+    checkRole(context, 'ADMIN');
     
     const article = new Article(input);
     await article.save();
@@ -12,8 +12,8 @@ export const articleMutations = {
   },
   
   updateArticle: async (_: any, { id, input }: any, context: any) => {
-    // Check if user is admin
-    checkRole(context, 'admin');
+    // Check if user is ADMIN
+    checkRole(context, 'ADMIN');
     
     return await Article.findByIdAndUpdate(
       id,
@@ -23,16 +23,16 @@ export const articleMutations = {
   },
   
   deleteArticle: async (_: any, { id }: { id: string }, context: any) => {
-    // Check if user is admin
-    checkRole(context, 'admin');
+    // Check if user is ADMIN
+    checkRole(context, 'ADMIN');
     
     const result = await Article.findByIdAndDelete(id);
     return !!result;
   },
   
   publishArticle: async (_: any, { id }: { id: string }, context: any) => {
-    // Check if user is admin
-    checkRole(context, 'admin');
+    // Check if user is ADMIN
+    checkRole(context, 'ADMIN');
     
     return await Article.findByIdAndUpdate(
       id,
@@ -47,8 +47,8 @@ export const articleMutations = {
   },
   
   unpublishArticle: async (_: any, { id }: { id: string }, context: any) => {
-    // Check if user is admin
-    checkRole(context, 'admin');
+    // Check if user is ADMIN
+    checkRole(context, 'ADMIN');
     
     return await Article.findByIdAndUpdate(
       id,

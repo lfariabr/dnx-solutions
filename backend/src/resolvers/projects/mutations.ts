@@ -4,7 +4,7 @@ import { checkRole } from '../../utils/authUtils';
 export const projectMutations = {
   createProject: async (_: any, { input }: any, context: any) => {
     // Check if user is admin
-    checkRole(context, 'admin');
+    checkRole(context, 'ADMIN');
     
     const project = new Project(input);
     await project.save();
@@ -13,7 +13,7 @@ export const projectMutations = {
   
   updateProject: async (_: any, { id, input }: any, context: any) => {
     // Check if user is admin
-    checkRole(context, 'admin');
+    checkRole(context, 'ADMIN');
     
     return await Project.findByIdAndUpdate(
       id,
@@ -24,7 +24,7 @@ export const projectMutations = {
   
   deleteProject: async (_: any, { id }: { id: string }, context: any) => {
     // Check if user is admin
-    checkRole(context, 'admin');
+    checkRole(context, 'ADMIN');
     
     const result = await Project.findByIdAndDelete(id);
     return !!result;

@@ -1,9 +1,15 @@
 export const userTypes = `#graphql
+  enum Role {
+    ADMIN
+    EDITOR
+    USER
+  }
+
   type User {
     id: ID!
     name: String!
     email: String!
-    role: String!
+    role: Role!
     lastLogin: String
     createdAt: String!
     updatedAt: String!
@@ -23,5 +29,19 @@ export const userTypes = `#graphql
   input LoginInput {
     email: String!
     password: String!
+  }
+
+  type Query {
+    users: [User!]!
+    user(id: ID!): User
+    me: User
+  }
+
+  type Mutation {
+    register(input: RegisterInput!): AuthPayload!
+    login(input: LoginInput!): AuthPayload!
+    logout: Boolean!
+    updateUserRole(id: ID!, role: Role!): User!
+    deleteUser(id: ID!): Boolean!
   }
 `;

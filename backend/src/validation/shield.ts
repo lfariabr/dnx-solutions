@@ -21,7 +21,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
 const isAdmin = rule({ cache: 'contextual' })(
   async (_parent: any, _args: any, context: any) => {
     try {
-      checkRole(context, 'admin');
+      checkRole(context, 'ADMIN');
       return true;
     } catch (error) {
       return false;

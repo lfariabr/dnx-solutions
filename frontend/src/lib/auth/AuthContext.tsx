@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { gql, useMutation, ApolloError } from '@apollo/client';
 import Cookies from 'js-cookie';
+import { UserRole } from '../graphql/types/user.types';
 
 // GraphQL Mutations
 const LOGIN_MUTATION = gql`
@@ -45,7 +46,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'admin';
+  role: UserRole;
 }
 
 interface AuthContextType {
@@ -54,7 +55,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (credentials: { name: string, email: string, password: string }) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -63,23 +64,32 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Helper function to format error messages
-const formatError = (error: unknown): string => {
-  if (error instanceof ApolloError) {
-    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-      return error.graphQLErrors[0].message;
+// Format error message for better UX
+const formatError = (err: any): string => {
+  // Check if it's an Apollo error with GraphQL errors
+  if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+    const graphQLError = err.graphQLErrors[0];
+    
+    // Handle specific error codes with user-friendly messages
+    if (graphQLError.extensions?.code === 'UNAUTHENTICATED') {
+      return 'Invalid email or password. Please try again.';
     }
     
-    if (error.networkError) {
-      return `Network error: ${error.networkError.message}`;
+    if (graphQLError.extensions?.code === 'BAD_USER_INPUT') {
+      return 'Please check your information and try again.';
     }
+    
+    // Return the message from the GraphQL error if available
+    return graphQLError.message || 'An error occurred. Please try again.';
   }
   
-  if (error instanceof Error) {
-    return error.message;
+  // Handle network errors
+  if (err.networkError) {
+    return 'Unable to connect to the server. Please check your internet connection.';
   }
   
-  return 'An unknown error occurred';
+  // Default error message
+  return err.message || 'An unexpected error occurred. Please try again.';
 };
 
 // Create context with default values
@@ -171,8 +181,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
         router.push('/');
       }
     } catch (err) {
+      // Detailed error logging
       console.error('Login error:', err);
-      setError(formatError(err));
+      console.log('Error type:', Object.prototype.toString.call(err));
+      console.log('Error properties:', Object.keys(err));
+      
+      if (err.graphQLErrors) {
+        console.log('GraphQL Errors:', JSON.stringify(err.graphQLErrors, null, 2));
+      }
+      
+      if (err.networkError) {
+        console.log('Network Error:', err.networkError);
+      }
+      
+      // Try multiple approaches to extract the error message
+      let errorMessage = 'An error occurred during login';
+      
+      if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+        errorMessage = err.graphQLErrors[0].message;
+        console.log('Using GraphQL error message:', errorMessage);
+      } else if (err.message) {
+        errorMessage = err.message;
+        console.log('Using error.message:', errorMessage);
+      }
+      
+      // Set the error and log confirmation
+      setError(errorMessage);
+      console.log('Error state set to:', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -187,7 +222,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         variables: { 
           input: { name, email, password }
         },
-      });
+      }); 
       
       if (data?.register) {
         setUser(data.register.user);
@@ -202,7 +237,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (err) {
       console.error('Registration error:', err);
-      setError(formatError(err));
+      
+      // Extract the error message directly from GraphQL error
+      if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+        setError(err.graphQLErrors[0].message);
+      } else if (err.networkError) {
+        setError(`Network error: ${err.networkError.message}`);
+      } else {
+        setError(err.message || 'An error occurred during registration');
+      }
     } finally {
       setLoading(false);
     }

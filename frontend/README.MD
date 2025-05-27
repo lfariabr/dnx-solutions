@@ -183,6 +183,8 @@ b. Article Management:
 - Create article editor with rich text support
 - Implement publishing/unpublishing functionality
 
-c. User Management:
+c. User Management: 
 - Create user list view
 - Add role management capabilities
+- Added backend routes to exhibit users' data
+

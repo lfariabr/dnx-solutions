@@ -36,11 +36,11 @@ export default function RegisterPage() {
       return;
     }
     
-    await register({
+    await register(
       name,
       email,
       password,
-    });
+    );
   };
 
   return (

@@ -12,7 +12,6 @@ export const typeDefs = `#graphql
   ${chatbotTypes}
 
   type Query {
-
     # Test query
     hello: String
     
@@ -30,6 +29,8 @@ export const typeDefs = `#graphql
     articlesByTag(tag: String!, limit: Int, offset: Int): [Article!]!
     
     # User queries
+    users: [User!]!
+    user(id: ID!): User
     me: User
 
     # Rate limit test query
@@ -56,6 +57,8 @@ export const typeDefs = `#graphql
     register(input: RegisterInput!): AuthPayload!
     login(input: LoginInput!): AuthPayload!
     logout: Boolean!
+    updateUserRole(id: ID!, role: Role!): User!
+    deleteUser(id: ID!): Boolean!
 
     # Chatbot mutations
     askQuestion(question: String!): ChatResponse!

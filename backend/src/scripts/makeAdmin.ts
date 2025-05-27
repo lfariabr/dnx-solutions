@@ -16,7 +16,7 @@ const makeAdmin = async (email: string) => {
       process.exit(1);
     }
     
-    user.role = 'admin';
+    user.role = 'ADMIN';
     await user.save();
     
     console.log(`User ${email} has been updated to admin role`);

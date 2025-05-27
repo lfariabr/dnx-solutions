@@ -21,7 +21,6 @@ export function middleware(request: NextRequest) {
   if (isAdminRoute) {
     // No token - redirect to login
     if (!token) {
-      console.log('Middleware: No token found, redirecting to login');
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
@@ -40,14 +39,11 @@ export function middleware(request: NextRequest) {
       }
       
       // Check for admin role - must be explicitly 'admin'
-      if (decoded.role !== 'admin') {
-        console.log('Middleware: User role is not admin:', decoded.role);
+      if (decoded.role !== 'ADMIN') {
         return NextResponse.redirect(new URL('/', request.url));
       }
       
-      console.log('Middleware: Admin access granted for:', decoded.email);
     } catch (error) {
-      console.error('Middleware: Invalid token:', error);
       const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
     }

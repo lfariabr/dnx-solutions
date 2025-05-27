@@ -10,7 +10,7 @@ db.createCollection('messages');
 // Create a database user for the application (optional - can also use root credentials)
 // This creates a user specific to the portfolio database with readWrite permissions
 db.createUser({
-  user: process.env.MONGO_USER || 'admin',
+  user: process.env.MONGO_USER || 'ADMIN',
   pwd: process.env.MONGO_PASSWORD || 'secure_password_here',
   roles: [
     { role: 'readWrite', db: 'portfolio' }
@@ -23,7 +23,7 @@ db.users.insertOne({
   name: 'Admin User',
   email: 'admin@example.com',
   password: '$2b$10$X/A.CDLyPJBxPwLxpkGpkOGe9hLCO4wt36i/m.8n9GRXGQFwDJRy.', // hashed password: 'adminPassword123!'
-  role: 'admin',
+  role: 'ADMIN',
   createdAt: new Date()
 });
 

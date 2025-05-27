@@ -30,7 +30,7 @@ export function isAdmin(): boolean {
     }
     
     // Check if user has admin role
-    return decoded.role === 'admin';
+    return decoded.role === 'ADMIN';
   } catch (error) {
     console.error('Error verifying admin status:', error);
     return false;

@@ -22,12 +22,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const router = useRouter();
   const [initialized, setInitialized] = useState(false);
-
-  console.log('Admin Layout - User:', user);
-  console.log('Admin Layout - Role:', user?.role);
-  console.log('Admin Layout - isAuthenticated:', isAuthenticated);
-  console.log('Admin Layout - loading:', loading);
-
+  
   // Backup check to ensure we have user data from localStorage
   useEffect(() => {
     if (!initialized && !loading && !user) {
@@ -51,7 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (!loading) {
       if (!isAuthenticated) {
         router.push('/login?redirect=/admin');
-      } else if (isAuthenticated && user?.role !== 'admin') {
+      } else if (isAuthenticated && user?.role !== 'ADMIN') {
         console.log('User is not admin, redirecting to home');
         router.push('/');
       }

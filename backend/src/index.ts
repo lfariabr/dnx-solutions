@@ -18,6 +18,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { permissions } from './validation/shield';
 import { logger, requestLogger } from './utils/logger';
 import { applyMiddleware } from 'graphql-middleware';
+import { UserRole } from './models/User';
 
 console.log(`Starting server in ${config.nodeEnv} mode`);
 
@@ -26,7 +27,7 @@ interface MyContext {
   user?: {
     id: string;
     email: string;
-    role: string;
+    role: UserRole;
   } | null;
 }
 

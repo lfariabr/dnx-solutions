@@ -3,11 +3,17 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
 
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  EDITOR = 'EDITOR',
+  USER = 'USER'
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: string;
+  role: UserRole;
   lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -32,8 +38,8 @@ const UserSchema: Schema = new Schema(
     },
     role: { 
       type: String, 
-      enum: ['admin', 'user'], 
-      default: 'user' 
+      enum: Object.values(UserRole),
+      default: UserRole.USER 
     },
     lastLogin: { type: Date },
   },
