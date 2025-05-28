@@ -19,12 +19,11 @@ Pages:
 adjust padding projects and articles
 9. Add feature chatbot on frontend
 10. Frontend tests with Jest
+11. Dockerfile for frontend
 
 Pending:
-11. Dockerfile for frontend
-12. Relay Compiler for efficient data fetching
-13. AWS setup for file storage and data storage
-
+12. File storage and data storage (AWS? DigitalOcean?)
+13. Relay Compiler for efficient data fetching
 
 Done:
 1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot
@@ -277,3 +276,6 @@ To add new tests:
 3. Import the component or hook you want to test
 4. Use the provided utilities for rendering and testing
 5. Follow existing patterns for mocking dependencies
+
+## 11. Dockerfile for frontend
+All details in docs/11.DockerFrontend.MD

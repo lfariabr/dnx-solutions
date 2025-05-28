@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../models/User';
 import config from '../config/config';
+import { UserRole } from '../models/User';
 
 const makeAdmin = async (email: string) => {
   try {
@@ -16,7 +17,7 @@ const makeAdmin = async (email: string) => {
       process.exit(1);
     }
     
-    user.role = 'ADMIN';
+    user.role = UserRole.ADMIN;
     await user.save();
     
     console.log(`User ${email} has been updated to admin role`);

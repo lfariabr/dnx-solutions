@@ -4,9 +4,11 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files
 COPY package*.json ./
-RUN npm ci
+
+# Install dependencies - use regular npm install since package-lock might be out of sync
+RUN npm install
 
 # Copy TypeScript configurations and source code
 COPY tsconfig*.json ./
@@ -27,8 +29,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm ci --only=production
+# Install only production dependencies - using regular npm install for compatibility
+RUN npm install --omit=dev
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
