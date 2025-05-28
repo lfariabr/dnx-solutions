@@ -18,11 +18,13 @@ Pages:
 8. Frontend Adjustments:
 adjust padding projects and articles
 9. Add feature chatbot on frontend
+10. Frontend tests with Jest
 
-10. Relay Compiler for efficient data fetching
-TODO
-11. AWS setup for file storage and data storage
-TODO
+Pending:
+11. Dockerfile for frontend
+12. Relay Compiler for efficient data fetching
+13. AWS setup for file storage and data storage
+
 
 Done:
 1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot
@@ -200,4 +202,78 @@ b. Button not appearing on "Actions"
 c. Login/Register pages improvements
 d. Error message on forms not appearing
 
+## 9. Add feature chatbot on frontend
+1. We put the limit of 5 messages/hour on chatbot page in src/app/chatbot/page.tsx for auth users
+2. We created login/register box on chatbot page in src/app/chatbot/page.tsx
 
+## 10. Frontend Testing with Jest
+
+We've implemented a comprehensive testing setup for the frontend using Jest and React Testing Library, following industry best practices and aligned with the Windsurf Engineering Manifesto.
+
+### Testing Setup
+
+1. **Jest Configuration**
+   - Configured with TypeScript support via ts-jest
+   - Set up for React/Next.js testing with jsdom environment
+   - Module mapping for CSS, images, and path aliases
+   - Coverage reporting for all TypeScript/JavaScript files
+
+2. **Testing Utilities**
+   - Custom render function with provider wrappers (Apollo, ThemeProvider)
+   - Mock implementations for Next.js router and Image components
+   - Utility functions for testing components with all necessary context
+
+3. **Test Types**
+   - **Component Tests**: Testing UI components for correct rendering and behavior
+   - **Hook Tests**: Testing custom hooks with mocked Apollo responses
+   - **Integration Tests**: Testing component interactions and state changes
+
+### What's Covered
+
+1. **UI Components**
+   - Basic rendering and variant testing for UI components
+   - Event handling (clicks, form submissions)
+   - Accessibility and proper ARIA attributes
+
+2. **Custom Hooks**
+   - Testing data fetching with mocked GraphQL responses
+   - Testing mutations and their side effects
+   - Error handling and loading states
+
+3. **Authentication**
+   - Login/registration flows
+   - Token handling and user session management
+   - Protected route access
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode during development
+npm run test:watch
+
+# Generate test coverage report
+npm run test:coverage
+```
+
+The coverage report will be available in the `coverage` directory after running the coverage command.
+
+### Best Practices
+
+- Tests follow the AAA pattern: Arrange, Act, Assert
+- Each test focuses on a single behavior or outcome
+- Mock external dependencies to isolate the code being tested
+- Use descriptive test names that explain the expected behavior
+- Keep tests independent and avoid test interdependencies
+
+### Adding New Tests
+
+To add new tests:
+
+1. Create a `__tests__` directory in the component or hook directory
+2. Name your test file with the `.test.tsx` or `.test.ts` extension
+3. Import the component or hook you want to test
+4. Use the provided utilities for rendering and testing
+5. Follow existing patterns for mocking dependencies
