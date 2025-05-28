@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
       'avatars.githubusercontent.com',
       'user-images.githubusercontent.com',
       'unsplash.com',
-      'images.unsplash.com'
+      'images.unsplash.com',
+      'plus.unsplash.com',
     ],
   },
 };

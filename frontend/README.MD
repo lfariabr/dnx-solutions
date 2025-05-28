@@ -16,13 +16,17 @@ Pages:
 6. Login, Logout and Register test with credentials
 7. Admin manage content: projects, articles and users
 8. Frontend Adjustments:
-- Layout with some left padding on home
-- Button not appearing on "Actions"
-- Login/Register pages improvements
-- Error message on forms not appearing
+
 
 9. Relay Compiler for efficient data fetching
+TODO
+
+add logo
+adjust padding projects and articles
+add feature chatbot on frontend
+
 10. AWS setup for file storage and data storage
+TODO
 
 Done:
 1. Create Section Pages: Build out the placeholder pages for Projects, Articles, and Chatbot
@@ -193,4 +197,11 @@ c. User Management:
 - Create user list view
 - Add role management capabilities
 - Added backend routes to exhibit users' data
+
+## 8. Frontend Adjustments
+a. Layout with some left padding on home
+b. Button not appearing on "Actions"
+c. Login/Register pages improvements
+d. Error message on forms not appearing
+
 

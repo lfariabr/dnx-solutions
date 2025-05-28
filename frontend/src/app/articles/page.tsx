@@ -43,7 +43,7 @@ export default function ArticlesPage() {
   return (
     <MainLayout>
       <div className="container py-12 max-w-6xl">
-        <div className="space-y-2 mb-10">
+        <div className="space-y-2 mb-10 px-4">
           <h1 className="text-3xl font-bold tracking-tight">Articles</h1>
           <p className="text-muted-foreground">
             Latest thoughts, tutorials, and insights
@@ -79,7 +79,7 @@ export default function ArticlesPage() {
 
         {/* Articles list */}
         {!loading && !error && articles.length > 0 && (
-          <div className="space-y-10">
+          <div className="space-y-10 px-4">
             {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
@@ -97,8 +97,8 @@ function ArticleCard({ article }: { article: Article }) {
     : article.content);
 
   return (
-    <div className="group border-b pb-8 last:border-b-0">
-      <div className="flex flex-col md:flex-row gap-6">
+    <Link href={`/articles/${article.id}`} className="block group border-b pb-8 last:border-b-0">
+      <div className="flex flex-col md:flex-row gap-6 relative">
         {/* Article image */}
         {article.imageUrl && (
           <div className="w-full md:w-1/3 aspect-video bg-muted overflow-hidden rounded-lg">
@@ -111,11 +111,9 @@ function ArticleCard({ article }: { article: Article }) {
         
         {/* Article content */}
         <div className="w-full md:w-2/3 space-y-4">
-          <Link href={`/articles/${article.id}`} className="block">
-            <h2 className="text-2xl font-semibold hover:text-primary transition-colors">
-              {article.title}
-            </h2>
-          </Link>
+          <h2 className="text-2xl font-semibold group-hover:text-primary transition-colors">
+            {article.title}
+          </h2>
           
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
@@ -138,14 +136,14 @@ function ArticleCard({ article }: { article: Article }) {
             </div>
           )}
           
-          <Link 
-            href={`/articles/${article.id}`}
-            className="inline-block text-sm font-medium text-primary hover:underline"
-          >
+          <span className="inline-block text-sm font-medium text-primary hover:underline">
             Read more
-          </Link>
+          </span>
         </div>
+
+        {/* Overlay for better click handling */}
+        <span className="absolute inset-0 z-10" aria-hidden="true" />
       </div>
-    </div>
+    </Link>
   );
 }

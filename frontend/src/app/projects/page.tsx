@@ -14,7 +14,7 @@ export default function ProjectsPage() {
   return (
     <MainLayout>
       <div className="container py-12 max-w-6xl">
-        <div className="space-y-2 mb-10">
+        <div className="space-y-2 mb-10 px-4">
           <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
           <p className="text-muted-foreground">
             A showcase of my recent development work and technical projects.
@@ -50,7 +50,7 @@ export default function ProjectsPage() {
 
         {/* Projects grid */}
         {!loading && !error && projects.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -64,91 +64,78 @@ export default function ProjectsPage() {
 // Format date safely with fallback
 const formatDateSafe = (dateString: string) => {
   try {
-    // First try to parse the ISO string
     const date = parseISO(dateString);
-    
-    // Check if the result is a valid date
-    if (isValid(date)) {
-      return `${formatDistanceToNow(date)} ago`;
-    }
-    
-    // If it's not a valid ISO date, try direct Date constructor
-    const fallbackDate = new Date(dateString);
-    if (isValid(fallbackDate)) {
-      return `${formatDistanceToNow(fallbackDate)} ago`;
-    }
-    
-    // If all parsing fails, return a fallback
-    return 'recently';
-  } catch (error) {
-    console.error('Date formatting error:', error);
-    return 'recently';
+    if (isValid(date)) return `${formatDistanceToNow(date)} ago`;
+    const fallback = new Date(dateString);
+    return isValid(fallback) ? `${formatDistanceToNow(fallback)} ago` : "recently";
+  } catch {
+    return "recently";
   }
 };
 
-function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project }: { project: Project }) {
   return (
-    <div className="group rounded-lg border overflow-hidden bg-card text-card-foreground shadow hover:shadow-lg transition-all">
-      <div className="aspect-video w-full bg-muted relative overflow-hidden">
-        {/* Project image or placeholder */}
-        {project.imageUrl ? (
-          <div 
-            className="absolute inset-0 bg-cover bg-center" 
-            style={{ backgroundImage: `url(${project.imageUrl})` }}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-background/80 flex items-center justify-center text-2xl font-bold">
-            {project.title}
-          </div>
-        )}
-      </div>
-      <div className="p-6">
-        <h2 className="text-xl font-semibold mb-2">{project.title}</h2>
-        <p className="text-muted-foreground mb-4">
-          {project.description.length > 150
-            ? `${project.description.substring(0, 150)}...`
-            : project.description}
-        </p>
-        
-        <div className="flex items-center text-sm text-muted-foreground mb-4">
-          <Calendar className="h-4 w-4 mr-1" />
-          <span>Updated {formatDateSafe(project.updatedAt)}</span>
-        </div>
-        
-        <div className="flex gap-3 mt-4">
-          {project.githubUrl && (
-            <a 
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium hover:underline"
-            >
-              GitHub
-            </a>
+    <Link href={`/projects/${project.id}`} className="relative block group">
+      <div className="group rounded-lg border overflow-hidden bg-card text-card-foreground shadow hover:shadow-lg transition-all hover:scale-[1.02] h-full">
+        <div className="aspect-video w-full bg-muted relative overflow-hidden">
+          {project.imageUrl ? (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${project.imageUrl})` }}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-background/80 flex items-center justify-center text-2xl font-bold">
+              {project.title}
+            </div>
           )}
-          
-          <Link 
-            href={`/projects/${project.id}`}
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            View Details
-          </Link>
         </div>
-        
-        {/* Technology tags */}
-        {project.technologies && project.technologies.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
-            {project.technologies.map((tech, i) => (
-              <span 
-                key={i}
-                className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs"
-              >
-                {tech}
-              </span>
-            ))}
+
+        <div className="p-5 sm:p-7 flex flex-col h-full relative z-10">
+          <h2 className="text-xl font-semibold mb-2">{project.title}</h2>
+          <p className="text-muted-foreground mb-2 text-sm line-clamp-3">
+            {project.description.length > 150
+              ? `${project.description.substring(0, 150)}...`
+              : project.description}
+          </p>
+
+          <div className="flex items-center text-sm text-muted-foreground mb-4">
+            <Calendar className="h-4 w-4 mr-1" />
+            <span>Updated {formatDateSafe(project.updatedAt)}</span>
           </div>
-        )}
+
+          <div className="flex gap-3 mb-2">
+            {project.githubUrl && (
+              <span 
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
+                }}
+                className="text-sm font-medium hover:underline z-20 cursor-pointer"
+              >
+                GitHub
+              </span>
+            )}
+            <span className="text-sm font-medium text-primary hover:underline z-20">
+              View Details
+            </span>
+          </div>
+
+          {project.technologies?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t">
+              {project.technologies.map((tech, i) => (
+                <span
+                  key={i}
+                  className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <span className="absolute inset-0 z-10" aria-hidden="true" />
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

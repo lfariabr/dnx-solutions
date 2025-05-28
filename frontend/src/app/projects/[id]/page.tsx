@@ -67,7 +67,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
             </AlertDescription>
           </Alert>
         ) : project ? (
-          <div className="space-y-8">
+          <div className="space-y-8 px-4">
             <Button variant="outline" size="sm" asChild className="mb-4">
               <Link href="/projects" className="flex items-center gap-1">
                 <ArrowLeft className="h-4 w-4" />

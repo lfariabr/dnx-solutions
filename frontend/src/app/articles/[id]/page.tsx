@@ -62,7 +62,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
         {/* Article details */}
         {!loading && !error && article && (
           <>
-            <div className="mb-6">
+            <div className="mb-6 px-4">
               <Link href="/articles" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Articles
@@ -78,7 +78,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
 
             {/* Article image */}
             {article.imageUrl && (
-              <div className="relative w-full rounded-lg overflow-hidden mb-8">
+              <div className="relative w-full rounded-lg overflow-hidden mb-8 px-4">
                 <div 
                   className="aspect-video w-full bg-cover bg-center" 
                   style={{ backgroundImage: `url(${article.imageUrl})` }}
@@ -88,7 +88,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
 
             {/* Tags */}
             {article.tags && article.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-6 px-4">
                 {article.tags.map((tag, index) => (
                   <span 
                     key={index}
@@ -101,7 +101,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
             )}
 
             {/* Article content */}
-            <div className="prose dark:prose-invert max-w-none">
+            <div className="prose dark:prose-invert max-w-none px-4">
               {/* Split content by newlines and create paragraphs */}
               {article.content.split('\n\n').map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
