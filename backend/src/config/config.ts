@@ -37,8 +37,8 @@ const config: Config = {
     mongodbUri: process.env.MONGODB_URI || '',
     jwtSecret: process.env.JWT_SECRET || '',
     redisUrl: process.env.REDIS_URL || '',
-    rateLimitWindow: parseInt(process.env.RATE_LIMIT_WINDOW || '60000', 10),
-    rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+    rateLimitWindow: parseInt(process.env.RATE_LIMIT_WINDOW || '60', 10),
+    rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '5', 10),
     openaiApiKey: process.env.OPENAI_API_KEY || '',
   };
   

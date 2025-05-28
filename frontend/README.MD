@@ -16,16 +16,12 @@ Pages:
 6. Login, Logout and Register test with credentials
 7. Admin manage content: projects, articles and users
 8. Frontend Adjustments:
-
-
-9. Relay Compiler for efficient data fetching
-TODO
-
-add logo
 adjust padding projects and articles
-add feature chatbot on frontend
+9. Add feature chatbot on frontend
 
-10. AWS setup for file storage and data storage
+10. Relay Compiler for efficient data fetching
+TODO
+11. AWS setup for file storage and data storage
 TODO
 
 Done:
