@@ -104,3 +104,6 @@ public
 .tern-port
 .env
 .env.production
+
+# Server
+server

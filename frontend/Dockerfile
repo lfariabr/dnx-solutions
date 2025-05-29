@@ -1,64 +1,32 @@
-# Use Node.js LTS as the base image
 FROM node:20-alpine AS deps
-
-# Set working directory
 WORKDIR /app
-
-# Copy package files
 COPY package.json package-lock.json* ./
-
-# Install dependencies with force flag to bypass peer dependency conflicts
-# This is necessary because React 19 conflicts with testing libraries
 RUN npm install --force
 
-# Builder stage - create production build
 FROM node:20-alpine AS builder
-
-# Set working directory
 WORKDIR /app
-
-# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Next.js collects anonymous telemetry data - disable it
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Build the application with ESLint checks disabled
-ENV NEXT_LINT=false
+RUN mkdir -p public
+# Set the environment variable for the build process
+ENV NEXT_PUBLIC_GRAPHQL_URL=https://luisfaria.dev/graphql
 RUN npm run build
 
-# Production stage - minimal runtime image
 FROM node:20-alpine AS runner
-
 WORKDIR /app
-
-# Set environment variables
 ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+# Set the environment variable for runtime as well
+ENV NEXT_PUBLIC_GRAPHQL_URL=https://luisfaria.dev/graphql
 
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Copy only necessary files from builder stage
+# Copiando arquivos necessários
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-# Copy the standalone output
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Use non-root user
 USER nextjs
-
-# Expose port
 EXPOSE 3000
-
-# Set host to allow connections from outside container
 ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
 
-# Start the application
 CMD ["node", "server.js"]
