@@ -101,12 +101,20 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
             )}
 
             {/* Article content */}
-            <div className="prose dark:prose-invert max-w-none px-4">
-              {/* Split content by newlines and create paragraphs */}
-              {article.content.split('\n\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
+            <div className="prose dark:prose-invert max-w-none px-4 space-y-1">
+            {article.content
+              .split(/—{2,}|[\n\r]+|🚀|🔧|📈|🧠|🛠|📝|📊|📎|⚡|🎯|💡|🧵|🎬|🍾|😮|😵|😵‍💫|😭|😵‍🔥|🪄|🫠|🔥|📌|🏁|🏗|🔗|📎|✍️|📂|📁|📃/)
+              .map(section => section.trim())
+              .filter(Boolean)
+              .map((section, idx) => {
+                const isHeading = /^Version \d|^The Stack|^Final Thoughts|^Business Impact|^MVP Tools|^Results Today|^Major Upgrades/i.test(section);
+                return isHeading ? (
+                  <h3 key={idx} className="text-xl font-semibold mt-2">{section}</h3>
+                ) : (
+                  <p key={idx}>{section}</p>
+                );
+              })}
+          </div>
           </>
         )}
       </div>
