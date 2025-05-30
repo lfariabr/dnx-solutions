@@ -9,8 +9,8 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Luis Faria - Portfolio",
-  description: "Personal portfolio and projects showcase",
+  title: "DNX Solutions",
+  description: "AWS Premier Partner",
 };
 
 export default function RootLayout({

@@ -1,10 +1,10 @@
-# Luis Faria Portfolio Project
+# DNX Solutions
 
 ## Project Overview
-A modern portfolio application built with Next.js, TypeScript, Node.js, GraphQL, and AWS.
+A modern application built with Next.js, TypeScript, Node.js, GraphQL, and AWS.
 
 ## Key Features
-- Portfolio showcase with project highlights
+- Showcase with project highlights
 - Articles section with categorization
 - Secure login area with JWT authentication
 - AI-powered chatbot (rate-limited to 1 question per hour per user)
@@ -28,7 +28,7 @@ A modern portfolio application built with Next.js, TypeScript, Node.js, GraphQL,
 
 ## Project Structure
 ```
-luisfaria/
+dnx-solutions/
 ├── frontend/          # Next.js with TypeScript
 ├── backend/           # Node.js, Apollo, GraphQL API
 ├── shared/            # Shared types and utilities

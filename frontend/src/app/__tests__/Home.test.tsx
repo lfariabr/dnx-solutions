@@ -33,7 +33,7 @@ describe('Home Page', () => {
     // Check for hero heading
     const heroHeading = screen.getByRole('heading', { level: 1 });
     expect(heroHeading).toBeInTheDocument();
-    expect(heroHeading).toHaveTextContent('Luis Faria');
+    expect(heroHeading).toHaveTextContent('DNX Solutions');
   });
 
   it('renders projects section', () => {
