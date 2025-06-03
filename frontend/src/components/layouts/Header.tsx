@@ -62,7 +62,8 @@ export function Header() {
             <Button 
               variant="outline" 
               size="sm" 
-              className="hidden md:flex items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+              className="hidden md:flex items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/30"
+
               asChild
             >
               <Link href="/contact">
@@ -84,34 +85,34 @@ export function Header() {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-100 dark:hover:bg-gray-800">
                     <UserIcon className="h-4 w-4" />
                     <span className="hidden md:inline-block">
                       {user?.name?.split(' ')[0] || 'Account'}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-800">
                   <div className="flex flex-col space-y-1 p-2">
-                    <p className="text-sm font-medium leading-none">
+                    <p className="text-sm font-medium leading-none dark:text-white">
                       {user?.name || 'User'}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user?.email}
                     </p>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+                  <DropdownMenuItem asChild className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200">
                     <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
                   {user?.role === 'ADMIN' && (
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200">
                       <Link href="/admin">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
                   <DropdownMenuItem 
-                    className="text-red-500 focus:text-red-500" 
+                    className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 dark:text-red-400" 
                     onClick={logout}
                   >
                     <LogOutIcon className="mr-2 h-4 w-4" />
@@ -122,12 +123,14 @@ export function Header() {
             ) : (
               <div className="flex gap-2">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" 
+                  size="sm" 
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/30">
                     Login
                   </Button>
                 </Link>
                 <Link href="/register" className="hidden sm:block">
-                  <Button variant="default" size="sm">
+                  <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                     Sign Up
                   </Button>
                 </Link>

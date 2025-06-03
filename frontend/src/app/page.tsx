@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-900 to-blue-700 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-b from-blue-900 to-blue-800 text-white">
         <div className="absolute inset-0 bg-grid-white/[0.05]" />
         <div className="container relative px-6 py-24 mx-auto text-center">
           <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
@@ -40,12 +40,17 @@ export default function Home() {
             Accelerate your cloud computing journey whether you're adopting, evolving, or operating cloud solutions.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 mt-10 sm:flex-row">
-            <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+            <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50 dark:bg-white dark:text-blue-700 dark:hover:bg-blue-50">
               <Link href="/contact">
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
+            <Button 
+              asChild 
+              size="lg" 
+              variant="outline" 
+              className="text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/30"
+            >
               <Link href="/solutions">
                 Explore Solutions
               </Link>
@@ -95,12 +100,17 @@ export default function Home() {
               Our team of certified AWS experts is here to help you every step of the way.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700">
                 <Link href="/contact">
                   Contact Us Today
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-white dark:border-white dark:hover:bg-white/10">
+              <Button 
+                asChild 
+                size="lg" 
+                variant="outline" 
+                className="text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-white dark:border-white dark:hover:bg-white/10"
+              >
                 <Link href="/case-studies">
                   View Case Studies
                 </Link>
