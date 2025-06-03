@@ -1,11 +1,11 @@
-import { projectTypes } from './types/projectTypes';
+import { caseStudyTypes } from './types/caseStudyTypes';
 import { articleTypes } from './types/articleTypes';
 import { userTypes } from './types/userTypes';
 import { rateTestTypes } from './types/rateTestTypes';
 import { chatbotTypes } from './types/chatbotTypes';
 
 export const typeDefs = `#graphql
-  ${projectTypes}
+  ${caseStudyTypes}
   ${articleTypes}
   ${userTypes}
   ${rateTestTypes}
@@ -15,10 +15,10 @@ export const typeDefs = `#graphql
     # Test query
     hello: String
     
-    # Project queries
-    projects: [Project!]!
-    project(id: ID!): Project
-    featuredProjects: [Project!]!
+    # CaseStudy queries
+    caseStudies: [CaseStudy!]!
+    caseStudy(id: ID!): CaseStudy
+    featuredCaseStudies: [CaseStudy!]!
     
     # Article queries
     articles(limit: Int, offset: Int): [Article!]!
@@ -41,10 +41,10 @@ export const typeDefs = `#graphql
   }
 
   type Mutation {
-    # Project mutations
-    createProject(input: ProjectInput!): Project!
-    updateProject(id: ID!, input: ProjectUpdateInput!): Project!
-    deleteProject(id: ID!): Boolean!
+    # CaseStudy mutations
+    createCaseStudy(input: CaseStudyInput!): CaseStudy!
+    updateCaseStudy(id: ID!, input: CaseStudyUpdateInput!): CaseStudy!
+    deleteCaseStudy(id: ID!): Boolean!
     
     # Article mutations
     createArticle(input: ArticleInput!): Article!

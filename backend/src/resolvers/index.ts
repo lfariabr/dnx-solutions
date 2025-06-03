@@ -1,5 +1,5 @@
-import { projectQueries } from './projects/queries';
-import { projectMutations } from './projects/mutations';
+import { caseStudyQueries } from './caseStudy/queries';
+import { caseStudyMutations } from './caseStudy/mutations';
 import { articleQueries } from './articles/queries';
 import { articleMutations } from './articles/mutations';
 import { userQueries } from './users/queries';
@@ -11,7 +11,7 @@ import { chatbotMutations } from './chatbot/mutations';
 // Combine all resolvers
 export const resolvers = {
   Query: {
-    ...projectQueries,
+    ...caseStudyQueries,
     ...articleQueries,
     ...userQueries,
     ...rateTestQueries,
@@ -19,7 +19,7 @@ export const resolvers = {
   },
   
   Mutation: {
-    ...projectMutations,
+    ...caseStudyMutations,
     ...articleMutations,
     ...userMutations,
     ...chatbotMutations,

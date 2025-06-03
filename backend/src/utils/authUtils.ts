@@ -14,10 +14,10 @@ export const checkAuth = (context: any) => {
 };
 
 // Check if user has the required role
-export const checkRole = (context: any, requiredRole: string = 'admin') => {
+export const checkRole = (context: any, requiredRole: string = 'ADMIN') => {
   const user = checkAuth(context);
   
-  if (user.role !== requiredRole && user.role !== 'admin') {
+  if (user.role !== requiredRole && user.role !== 'ADMIN') {
     throw new GraphQLError('Not authorized', {
       extensions: {
         code: 'FORBIDDEN',

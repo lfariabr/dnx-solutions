@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+    { href: '/admin/caseStudy', label: 'Case Studies', icon: FolderKanban },
     { href: '/admin/articles', label: 'Articles', icon: FileText },
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/settings', label: 'Settings', icon: Settings },

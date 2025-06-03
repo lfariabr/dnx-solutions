@@ -2,7 +2,7 @@ import { shield, rule, allow } from 'graphql-shield';
 import { checkAuth, checkRole } from '../utils/authUtils';
 import { validateInput } from './middleware';
 import { registerSchema, loginSchema } from './schemas/user.schema';
-import { projectInputSchema, projectUpdateSchema } from './schemas/project.schema';
+import { caseStudyInputSchema, caseStudyUpdateSchema } from './schemas/caseStudy.schema';
 import { articleInputSchema, articleUpdateSchema } from './schemas/article.schema';
 import { chatbotInputSchema } from './schemas/chatbot.schema';
 
@@ -38,12 +38,12 @@ const validateLogin = rule({ cache: 'no_cache' })(
   validateInput(loginSchema)
 );
 
-const validateProjectInput = rule({ cache: 'no_cache' })(
-  validateInput(projectInputSchema)
+const validateCaseStudyInput = rule({ cache: 'no_cache' })(
+  validateInput(caseStudyInputSchema)
 );
 
-const validateProjectUpdate = rule({ cache: 'no_cache' })(
-  validateInput(projectUpdateSchema, 'input')
+const validateCaseStudyUpdate = rule({ cache: 'no_cache' })(
+  validateInput(caseStudyUpdateSchema, 'input')
 );
 
 const validateArticleInput = rule({ cache: 'no_cache' })(
@@ -75,9 +75,9 @@ export const permissions = shield(
     Query: {
       // Public queries
       hello: allow,
-      projects: allow,
-      project: allow,
-      featuredProjects: allow,
+      caseStudies: allow,
+      caseStudy: allow,
+      featuredCaseStudies: allow,
       articles: allow,
       article: allow,
       articleBySlug: allow,
@@ -96,9 +96,9 @@ export const permissions = shield(
       login: validateLogin,
       
       // Admin-only mutations
-      createProject: and(isAdmin, validateProjectInput),
-      updateProject: and(isAdmin, validateProjectUpdate),
-      deleteProject: isAdmin,
+      createCaseStudy: and(isAdmin, validateCaseStudyInput),
+      updateCaseStudy: and(isAdmin, validateCaseStudyUpdate),
+      deleteCaseStudy: isAdmin,
       createArticle: and(isAdmin, validateArticleInput),
       updateArticle: and(isAdmin, validateArticleUpdate),
       deleteArticle: isAdmin,

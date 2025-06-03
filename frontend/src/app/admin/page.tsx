@@ -1,6 +1,6 @@
 'use client';
 
-import { useProjects } from "@/lib/hooks/useProjects";
+import { useCaseStudies } from "@/lib/hooks/useCaseStudies";
 import { useArticles } from "@/lib/hooks/useArticles";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,19 +9,19 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function AdminDashboardPage() {
-  const { projects, loading: projectsLoading } = useProjects();
+  const { caseStudies, loading: caseStudiesLoading } = useCaseStudies();
   const { articles, loading: articlesLoading } = useArticles();
   const { user } = useAuth();
   
   // Simple statistics for the dashboard
   const stats = [
     {
-      title: "Total Projects",
-      value: projectsLoading ? "..." : projects.length,
-      description: "Projects in your portfolio",
+      title: "Total Case Studies",
+      value: caseStudiesLoading ? "..." : caseStudies.length,
+      description: "Case studies in your portfolio",
       icon: FolderKanban,
       color: "text-blue-500",
-      link: "/admin/projects"
+      link: "/admin/caseStudy"
     },
     {
       title: "Total Articles",
@@ -81,14 +81,14 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
             <CardHeader>
-              <CardTitle>Create New Project</CardTitle>
+              <CardTitle>Create New Case Study</CardTitle>
               <CardDescription>
-                Add a new project to your portfolio
+                Add a new case study to your portfolio
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/admin/projects/new">
-                <Button>New Project</Button>
+              <Link href="/admin/caseStudy/new">
+                <Button>New Case Study</Button>
               </Link>
             </CardContent>
           </Card>
