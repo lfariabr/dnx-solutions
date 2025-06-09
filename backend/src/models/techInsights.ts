@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IArticle extends Document {
+export interface ITechInsights extends Document {
   title: string;
   slug: string;
   content: string;
@@ -14,7 +14,7 @@ export interface IArticle extends Document {
   updatedAt: Date;
 }
 
-const ArticleSchema: Schema = new Schema(
+const TechInsightsSchema: Schema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     slug: { 
@@ -36,11 +36,11 @@ const ArticleSchema: Schema = new Schema(
 );
 
 // Middleware to set publishedAt when published becomes true
-ArticleSchema.pre('save', function(next) {
+TechInsightsSchema.pre('save', function(next) {
   if (this.isModified('published') && this.published && !this.publishedAt) {
     this.publishedAt = new Date();
   }
   next();
 });
 
-export default mongoose.model<IArticle>('Article', ArticleSchema);
+export default mongoose.model<ITechInsights>('TechInsights', TechInsightsSchema);

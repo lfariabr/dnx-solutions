@@ -1,12 +1,12 @@
 import { caseStudyTypes } from './types/caseStudyTypes';
-import { articleTypes } from './types/articleTypes';
+import { techInsightsTypes } from './types/techInsightsTypes';
 import { userTypes } from './types/userTypes';
 import { rateTestTypes } from './types/rateTestTypes';
 import { chatbotTypes } from './types/chatbotTypes';
 
 export const typeDefs = `#graphql
   ${caseStudyTypes}
-  ${articleTypes}
+  ${techInsightsTypes}
   ${userTypes}
   ${rateTestTypes}
   ${chatbotTypes}
@@ -20,13 +20,13 @@ export const typeDefs = `#graphql
     caseStudy(id: ID!): CaseStudy
     featuredCaseStudies: [CaseStudy!]!
     
-    # Article queries
-    articles(limit: Int, offset: Int): [Article!]!
-    article(id: ID): Article
-    articleBySlug(slug: String!): Article
-    publishedArticles(limit: Int, offset: Int): [Article!]!
-    articlesByCategory(category: String!, limit: Int, offset: Int): [Article!]!
-    articlesByTag(tag: String!, limit: Int, offset: Int): [Article!]!
+    # TechInsights queries
+    techInsights(limit: Int, offset: Int): [TechInsights!]!
+    techInsightsById(id: ID): TechInsights
+    techInsightsBySlug(slug: String!): TechInsights
+    publishedTechInsights(limit: Int, offset: Int): [TechInsights!]!
+    techInsightsByCategory(category: String!, limit: Int, offset: Int): [TechInsights!]!
+    techInsightsByTag(tag: String!, limit: Int, offset: Int): [TechInsights!]!
     
     # User queries
     users: [User!]!
@@ -46,12 +46,12 @@ export const typeDefs = `#graphql
     updateCaseStudy(id: ID!, input: CaseStudyUpdateInput!): CaseStudy!
     deleteCaseStudy(id: ID!): Boolean!
     
-    # Article mutations
-    createArticle(input: ArticleInput!): Article!
-    updateArticle(id: ID!, input: ArticleUpdateInput!): Article!
-    deleteArticle(id: ID!): Boolean!
-    publishArticle(id: ID!): Article!
-    unpublishArticle(id: ID!): Article!
+    # TechInsights mutations
+    createTechInsights(input: TechInsightsInput!): TechInsights!
+    updateTechInsights(id: ID!, input: TechInsightsUpdateInput!): TechInsights!
+    deleteTechInsights(id: ID!): Boolean!
+    publishTechInsights(id: ID!): TechInsights!
+    unpublishTechInsights(id: ID!): TechInsights!
     
     # Auth mutations
     register(input: RegisterInput!): AuthPayload!
@@ -65,7 +65,7 @@ export const typeDefs = `#graphql
   }
 
   type Subscription {
-    articlePublished: Article
+    techInsightsPublished: TechInsights
     register: AuthPayload
     login: AuthPayload
     logout: Boolean

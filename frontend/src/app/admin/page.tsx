@@ -1,7 +1,7 @@
 'use client';
 
 import { useCaseStudies } from "@/lib/hooks/useCaseStudies";
-import { useArticles } from "@/lib/hooks/useArticles";
+import { useTechInsights } from "@/lib/hooks/useTechInsights";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, FolderKanban, Users, BarChart3, ExternalLink } from "lucide-react";
@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function AdminDashboardPage() {
   const { caseStudies, loading: caseStudiesLoading } = useCaseStudies();
-  const { articles, loading: articlesLoading } = useArticles();
+  const { techInsights, loading: techInsightsLoading } = useTechInsights();
   const { user } = useAuth();
   
   // Simple statistics for the dashboard
@@ -25,7 +25,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: "Total Articles",
-      value: articlesLoading ? "..." : articles.length,
+      value: techInsightsLoading ? "..." : techInsights.length,
       description: "Published and draft articles",
       icon: FileText,
       color: "text-green-500",
@@ -95,14 +95,14 @@ export default function AdminDashboardPage() {
           
           <Card>
             <CardHeader>
-              <CardTitle>Write New Article</CardTitle>
+              <CardTitle>Write New Tech Insight</CardTitle>
               <CardDescription>
-                Create a new article or blog post
+                Create a new tech insight
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/admin/articles/new">
-                <Button>New Article</Button>
+              <Link href="/admin/tech-insights/new">
+                <Button>New Tech Insight</Button>
               </Link>
             </CardContent>
           </Card>

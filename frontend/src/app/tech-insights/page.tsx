@@ -1,8 +1,8 @@
 'use client';
 
 import { MainLayout } from "@/components/layouts/MainLayout";
-import { usePublishedArticles } from "@/lib/hooks/useArticles";
-import { Article } from "@/lib/graphql/types/article.types";
+import { usePublishedTechInsights } from "@/lib/hooks/useTechInsights";
+import { TechInsights } from "@/lib/graphql/types/techInsightsData.types";
 import { AlertCircle, Calendar, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
@@ -37,14 +37,14 @@ const formatDateSafe = (dateString: string, formatType: 'distance' | 'full' = 'f
   }
 };
 
-export default function ArticlesPage() {
-  const { articles, loading, error } = usePublishedArticles();
+export default function TechInsightsPage() {
+  const { techInsights, loading, error } = usePublishedTechInsights();
 
   return (
     <MainLayout>
       <div className="container py-12 max-w-6xl">
         <div className="space-y-2 mb-10 px-4">
-          <h1 className="text-3xl font-bold tracking-tight">Articles</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Tech Insights</h1>
           <p className="text-muted-foreground">
             Latest thoughts, tutorials, and insights
           </p>
@@ -68,20 +68,20 @@ export default function ArticlesPage() {
         )}
 
         {/* Empty state */}
-        {!loading && !error && articles.length === 0 && (
+        {!loading && !error && techInsights.length === 0 && (
           <div className="text-center py-20">
-            <h3 className="text-lg font-semibold mb-2">No articles found</h3>
+            <h3 className="text-lg font-semibold mb-2">No tech insights found</h3>
             <p className="text-muted-foreground">
-              Articles will appear here once they are published.
+              Tech insights will appear here once they are published.
             </p>
           </div>
         )}
 
-        {/* Articles list */}
-        {!loading && !error && articles.length > 0 && (
+        {/* Tech insights list */}
+        {!loading && !error && techInsights.length > 0 && (
           <div className="space-y-10 px-4">
-            {articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+            {techInsights.map((techInsight) => (
+              <TechInsightsCard key={techInsight.id} techInsight={techInsight} />
             ))}
           </div>
         )}
@@ -90,42 +90,42 @@ export default function ArticlesPage() {
   );
 }
 
-function ArticleCard({ article }: { article: Article }) {
+function TechInsightsCard({ techInsight }: { techInsight: TechInsights }) {
   // Create a preview of the content
-  const contentPreview = article.excerpt || (article.content.length > 200
-    ? `${article.content.substring(0, 200)}...`
-    : article.content);
+  const contentPreview = techInsight.excerpt || (techInsight.content.length > 200
+    ? `${techInsight.content.substring(0, 200)}...`
+    : techInsight.content);
 
   return (
-    <Link href={`/articles/${article.id}`} className="block group border-b pb-8 last:border-b-0">
+    <Link href={`/tech-insights/${techInsight.id}`} className="block group border-b pb-8 last:border-b-0">
       <div className="flex flex-col md:flex-row gap-6 relative">
-        {/* Article image */}
-        {article.imageUrl && (
+        {/* Tech insight image */}
+        {techInsight.imageUrl && (
           <div className="w-full md:w-1/3 aspect-video bg-muted overflow-hidden rounded-lg">
             <div 
               className="w-full h-full bg-cover bg-center" 
-              style={{ backgroundImage: `url(${article.imageUrl})` }}
+              style={{ backgroundImage: `url(${techInsight.imageUrl})` }}
             />
           </div>
         )}
         
-        {/* Article content */}
+        {/* Tech insight content */}
         <div className="w-full md:w-2/3 space-y-4">
           <h2 className="text-2xl font-semibold group-hover:text-primary transition-colors">
-            {article.title}
+            {techInsight.title}
           </h2>
           
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-1" />
-            <span>{formatDateSafe(article.createdAt)}</span>
+            <span>{formatDateSafe(techInsight.createdAt)}</span>
           </div>
           
           <p className="text-muted-foreground">{contentPreview}</p>
           
           {/* Display tags if available */}
-          {article.tags && article.tags.length > 0 && (
+          {techInsight.tags && techInsight.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {article.tags.map((tag, index) => (
+              {techInsight.tags.map((tag, index) => (
                 <span 
                   key={index}
                   className="bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs"

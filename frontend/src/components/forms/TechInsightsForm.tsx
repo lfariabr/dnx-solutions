@@ -8,7 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Article, ArticleInput } from "@/lib/graphql/types/article.types";
+import { TechInsights, TechInsightsInput } from "@/lib/graphql/types/techInsightsData.types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 
 // Form validation schema
-const articleFormSchema = z.object({
+const techInsightsFormSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   slug: z.string().min(1, { message: "Slug is required" })
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, { 
@@ -24,44 +24,50 @@ const articleFormSchema = z.object({
     }),
   content: z.string().min(10, { message: "Content must be at least 10 characters" }),
   imageUrl: z.string().url({ message: "Must be a valid URL" }),
-  excerpt: z.string().max(150, { message: "Excerpt must be 150 characters or less" }).optional(),
+  excerpt: z.string()
+    .min(1, { message: "Excerpt is required" })
+    .max(150, { message: "Excerpt must be 150 characters or less" }),
+  categories: z.array(z.string()).min(1, { message: "At least one category is required" }),
   tags: z.array(z.string()).optional(),
+  published: z.boolean().optional(),
 });
 
-type ArticleFormValues = z.infer<typeof articleFormSchema>;
+type TechInsightsFormValues = z.infer<typeof techInsightsFormSchema>;
 
-interface ArticleFormProps {
-  article?: Article;
-  onSubmit: (data: ArticleInput) => Promise<void>;
+interface TechInsightsFormProps {
+  techInsights?: TechInsights;
+  onSubmit: (data: TechInsightsInput) => Promise<void>;
   loading: boolean;
   submitLabel: string;
   cancelAction?: () => void;
 }
 
-export function ArticleForm({ 
-  article, 
+export function TechInsightsForm({ 
+  techInsights, 
   onSubmit, 
   loading, 
   submitLabel,
   cancelAction 
-}: ArticleFormProps) {
+}: TechInsightsFormProps) {
   const router = useRouter();
   const [tagInput, setTagInput] = useState<string>("");
-  const [autoSlug, setAutoSlug] = useState(!article?.slug);
+  const [autoSlug, setAutoSlug] = useState(!techInsights?.slug);
   
   // Form default values
-  const defaultValues: Partial<ArticleFormValues> = {
-    title: article?.title || "",
-    slug: article?.slug || "",
-    content: article?.content || "",
-    imageUrl: article?.imageUrl || "",
-    excerpt: article?.excerpt || "",
-    tags: article?.tags || [],
+  const defaultValues: Partial<TechInsightsFormValues> = {
+    title: techInsights?.title || "",
+    slug: techInsights?.slug || "",
+    content: techInsights?.content || "",
+    imageUrl: techInsights?.imageUrl || "",
+    excerpt: techInsights?.excerpt || "",
+    categories: techInsights?.categories || [],
+    tags: techInsights?.tags || [],
+    published: techInsights?.published || false,
   };
   
   // Initialize form
-  const form = useForm<ArticleFormValues>({
-    resolver: zodResolver(articleFormSchema),
+  const form = useForm<TechInsightsFormValues>({
+    resolver: zodResolver(techInsightsFormSchema),
     defaultValues,
   });
   
@@ -104,7 +110,12 @@ export function ArticleForm({
   };
 
   // Handle form submission
-  const handleSubmit = async (data: ArticleFormValues) => {
+  const handleSubmit = async (formData: TechInsightsFormValues) => {
+    // Ensure tags is always an array, defaulting to empty array if undefined
+    const data = {
+      ...formData,
+      tags: formData.tags || [],
+    };
     await onSubmit(data);
   };
 
@@ -121,9 +132,28 @@ export function ArticleForm({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Article title" {...field} />
+                    <Input placeholder="Tech Insight title" {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Published field */}
+            <FormField
+              control={form.control}
+              name="published"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-2 pt-3">
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Published</FormLabel>
+                    <FormDescription>
+                      Set to true to publish this tech insight
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
@@ -152,13 +182,13 @@ export function ArticleForm({
                   </div>
                   <FormControl>
                     <Input 
-                      placeholder="article-slug" 
+                      placeholder="tech-insight-slug" 
                       {...field} 
                       disabled={autoSlug}
                     />
                   </FormControl>
                   <FormDescription>
-                    This will be used in the URL: /articles/your-slug
+                    This will be used in the URL: /tech-insights/your-slug
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -176,7 +206,7 @@ export function ArticleForm({
                     <Input placeholder="https://example.com/image.jpg" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Provide a URL to an image for this article
+                    Provide a URL to an image for this tech insight
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -199,7 +229,78 @@ export function ArticleForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    This will be displayed in article listings
+                    This will be displayed in tech insight listings
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {/* Categories input */}
+            <FormField
+              control={form.control}
+              name="categories"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Categories</FormLabel>
+                  <FormControl>
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {field.value?.map((category, index) => (
+                          <Badge key={index} variant="secondary" className="py-1 px-3">
+                            {category}
+                            <X
+                              className="ml-1 h-3 w-3 cursor-pointer"
+                              onClick={() => {
+                                const currentCategories = form.getValues("categories") || [];
+                                form.setValue(
+                                  "categories",
+                                  currentCategories.filter((c) => c !== category)
+                                );
+                              }}
+                            />
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add a category and press Enter"
+                          value={tagInput}
+                          onChange={(e) => setTagInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            const value = tagInput.trim();
+                            if ((e.key === "Enter" || e.key === ",") && value) {
+                              e.preventDefault();
+                              const currentCategories = form.getValues("categories") || [];
+                              if (!currentCategories.includes(value)) {
+                                form.setValue("categories", [...currentCategories, value]);
+                                setTagInput("");
+                              }
+                            }
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const value = tagInput.trim();
+                            if (value) {
+                              const currentCategories = form.getValues("categories") || [];
+                              if (!currentCategories.includes(value)) {
+                                form.setValue("categories", [...currentCategories, value]);
+                                setTagInput("");
+                              }
+                            }
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Categories help organize your tech insights (e.g., "Frontend", "Backend", "DevOps")
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -235,7 +336,7 @@ export function ArticleForm({
                     </div>
                   </FormControl>
                   <FormDescription>
-                    Tags help categorize your article
+                    Tags help categorize your tech insight
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -251,7 +352,7 @@ export function ArticleForm({
                   <FormLabel>Content</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Write your article content here..."
+                      placeholder="Write your tech insight content here..."
                       className="min-h-[300px]"
                       {...field}
                     />

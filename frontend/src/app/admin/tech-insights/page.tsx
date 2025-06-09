@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useArticles } from "@/lib/hooks/useArticles";
-import { useArticleMutations } from "@/lib/hooks/useArticleMutations";
+import { useTechInsights } from "@/lib/hooks/useTechInsights";
+import { useTechInsightsMutations } from "@/lib/hooks/useTechInsightsMutations";
 import { AlertCircle, Edit, Eye, Loader2, Plus, Trash, UploadCloud, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import { formatDistanceToNow, parseISO, isValid } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { Article } from "@/lib/graphql/types/article.types";
+import { TechInsights } from "@/lib/graphql/types/techInsightsData.types";
 import {
   Table,
   TableBody,
@@ -35,19 +35,19 @@ const formatDateSafe = (dateString: string) => {
   }
 };
 
-export default function ArticlesAdminPage() {
+export default function TechInsightsAdminPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { articles, loading, error } = useArticles();
-  const { publishArticle, unpublishArticle, deleteArticle, loading: mutationLoading } = useArticleMutations();
+  const { techInsights, loading, error } = useTechInsights();
+  const { publishTechInsight, unpublishTechInsight, deleteTechInsight, loading: mutationLoading } = useTechInsightsMutations();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   // Handle article deletion
-  const handleDeleteArticle = async (id: string) => {
+  const handleDeleteTechInsight = async (id: string) => {
     if (confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
       setActionLoading(id);
       try {
-        await deleteArticle(id);
+        await deleteTechInsight(id);
         toast({
           title: "Article deleted",
           description: "The article has been successfully deleted."
@@ -61,17 +61,17 @@ export default function ArticlesAdminPage() {
   };
 
   // Handle publish/unpublish
-  const handlePublishToggle = async (article: Article) => {
+  const handlePublishToggle = async (article: TechInsights) => {
     setActionLoading(article.id);
     try {
       if (article.published) {
-        await unpublishArticle(article.id);
+        await unpublishTechInsight(article.id);
         toast({
           title: "Article unpublished",
           description: "The article has been unpublished and is no longer visible to the public."
         });
       } else {
-        await publishArticle(article.id);
+        await publishTechInsight(article.id);
         toast({
           title: "Article published",
           description: "The article has been published and is now visible to the public."
@@ -88,15 +88,15 @@ export default function ArticlesAdminPage() {
     <div className="container py-10">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Articles</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Tech Insights</h1>
           <p className="text-muted-foreground">
-            Manage your blog articles here.
+            Manage your tech insights here.
           </p>
         </div>
         <Button asChild>
-          <Link href="/admin/articles/new" className="flex items-center gap-1">
+          <Link href="/admin/tech-insights/new" className="flex items-center gap-1">
             <Plus className="h-4 w-4" />
-            New Article
+            New Tech Insight
           </Link>
         </Button>
       </div>
@@ -119,19 +119,19 @@ export default function ArticlesAdminPage() {
       )}
 
       {/* Empty state */}
-      {!loading && !error && articles.length === 0 && (
+      {!loading && !error && techInsights.length === 0 && (
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>No articles yet</CardTitle>
+            <CardTitle>No tech insights yet</CardTitle>
             <CardDescription>
-              Get started by creating your first article.
+              Get started by creating your first tech insight.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild>
-              <Link href="/admin/articles/new" className="flex items-center gap-1">
+              <Link href="/admin/tech-insights/new" className="flex items-center gap-1">
                 <Plus className="h-4 w-4" />
-                Create Article
+                Create Tech Insight
               </Link>
             </Button>
           </CardContent>
@@ -139,7 +139,7 @@ export default function ArticlesAdminPage() {
       )}
 
       {/* Articles table */}
-      {!loading && !error && articles.length > 0 && (
+      {!loading && !error && techInsights.length > 0 && (
         <Card>
           <CardContent className="p-0">
             <Table>
@@ -153,25 +153,25 @@ export default function ArticlesAdminPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {articles.map((article) => (
-                  <TableRow key={article.id}>
-                    <TableCell className="font-medium">{article.title}</TableCell>
+                {techInsights.map((techInsights: TechInsights) => (
+                  <TableRow key={techInsights.id}>
+                    <TableCell className="font-medium">{techInsights.title}</TableCell>
                     <TableCell>
-                      {article.published ? (
+                      {techInsights.published ? 
                         <Badge variant="success" className="bg-green-600">Published</Badge>
-                      ) : (
+                      : (
                         <Badge variant="outline">Draft</Badge>
                       )}
                     </TableCell>
-                    <TableCell>{formatDateSafe(article.updatedAt)}</TableCell>
+                    <TableCell>{formatDateSafe(techInsights.updatedAt)}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {article.tags?.map((tag, index) => (
+                        {techInsights.tags?.map((tag, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {tag}
                           </Badge>
                         ))}
-                        {(!article.tags || article.tags.length === 0) && (
+                        {(!techInsights.tags || techInsights.tags.length === 0) && (
                           <span className="text-muted-foreground text-xs">No tags</span>
                         )}
                       </div>
@@ -181,13 +181,13 @@ export default function ArticlesAdminPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handlePublishToggle(article)}
-                          disabled={actionLoading === article.id}
-                          title={article.published ? "Unpublish" : "Publish"}
+                          onClick={() => handlePublishToggle(techInsights)}
+                          disabled={actionLoading === techInsights.id}
+                          title={techInsights.published ? "Unpublish" : "Publish"}
                         >
-                          {actionLoading === article.id ? (
+                          {actionLoading === techInsights.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : article.published ? (
+                          ) : techInsights.published ? (
                             <XCircle className="h-4 w-4" />
                           ) : (
                             <UploadCloud className="h-4 w-4" />
@@ -199,7 +199,7 @@ export default function ArticlesAdminPage() {
                           asChild
                           title="View"
                         >
-                          <Link href={`/articles/${article.id}`}>
+                          <Link href={`/tech-insights/${techInsights.id}`}>
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -209,18 +209,18 @@ export default function ArticlesAdminPage() {
                           asChild
                           title="Edit"
                         >
-                          <Link href={`/admin/articles/${article.id}/edit`}>
+                          <Link href={`/admin/tech-insights/${techInsights.id}/edit`}>
                             <Edit className="h-4 w-4" />
                           </Link>
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDeleteArticle(article.id)}
-                          disabled={actionLoading === article.id}
+                          onClick={() => handleDeleteTechInsight(techInsights.id)}
+                          disabled={actionLoading === techInsights.id}
                           title="Delete"
                         >
-                          {actionLoading === article.id ? (
+                          {actionLoading === techInsights.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <Trash className="h-4 w-4" />

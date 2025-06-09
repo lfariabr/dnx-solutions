@@ -1,9 +1,10 @@
+import { GraphQLError } from 'graphql';
 import { shield, rule, allow } from 'graphql-shield';
 import { checkAuth, checkRole } from '../utils/authUtils';
 import { validateInput } from './middleware';
 import { registerSchema, loginSchema } from './schemas/user.schema';
 import { caseStudyInputSchema, caseStudyUpdateSchema } from './schemas/caseStudy.schema';
-import { articleInputSchema, articleUpdateSchema } from './schemas/article.schema';
+import { techInsightsInputSchema, techInsightsUpdateSchema } from './schemas/techInsights.schema';
 import { chatbotInputSchema } from './schemas/chatbot.schema';
 
 // Authentication rules
@@ -46,12 +47,12 @@ const validateCaseStudyUpdate = rule({ cache: 'no_cache' })(
   validateInput(caseStudyUpdateSchema, 'input')
 );
 
-const validateArticleInput = rule({ cache: 'no_cache' })(
-  validateInput(articleInputSchema)
+const validateTechInsightsInput = rule({ cache: 'no_cache' })(
+  validateInput(techInsightsInputSchema)
 );
 
-const validateArticleUpdate = rule({ cache: 'no_cache' })(
-  validateInput(articleUpdateSchema, 'input')
+const validateTechInsightsUpdate = rule({ cache: 'no_cache' })(
+  validateInput(techInsightsUpdateSchema, 'input')
 );
 
 const validateChatbotInput = rule({ cache: 'no_cache' })(
@@ -78,12 +79,12 @@ export const permissions = shield(
       caseStudies: allow,
       caseStudy: allow,
       featuredCaseStudies: allow,
-      articles: allow,
-      article: allow,
-      articleBySlug: allow,
-      publishedArticles: allow,
-      articlesByCategory: allow,
-      articlesByTag: allow,
+      techInsights: allow,
+      techInsightsById: allow,
+      techInsightsBySlug: allow,
+      publishedTechInsights: allow,
+      techInsightsByCategory: allow,
+      techInsightsByTag: allow,
       
       // Protected queries
       me: isAuthenticated,
@@ -99,11 +100,11 @@ export const permissions = shield(
       createCaseStudy: and(isAdmin, validateCaseStudyInput),
       updateCaseStudy: and(isAdmin, validateCaseStudyUpdate),
       deleteCaseStudy: isAdmin,
-      createArticle: and(isAdmin, validateArticleInput),
-      updateArticle: and(isAdmin, validateArticleUpdate),
-      deleteArticle: isAdmin,
-      publishArticle: isAdmin,
-      unpublishArticle: isAdmin,
+      createTechInsights: and(isAdmin, validateTechInsightsInput),
+      updateTechInsights: and(isAdmin, validateTechInsightsUpdate),
+      deleteTechInsights: isAdmin,
+      publishTechInsights: isAdmin,
+      unpublishTechInsights: isAdmin,
       
       // User mutations
       askQuestion: and(isAuthenticated, validateChatbotInput),
@@ -112,24 +113,48 @@ export const permissions = shield(
   },
   {
     fallbackError: (error: any) => {
-      console.log('Shield error:', error);
+      console.error('SHIELD ERROR DETAILS:', error);
       
-    //   // Handle Zod validation errors
-    //   if (error && error.originalError && error.originalError.name === 'ZodError') {
-    //     return new Error(error.originalError.issues[0].message);
-    //   }
+      // Handle Zod validation errors
+      if (error?.extensions?.code === 'BAD_USER_INPUT' || error?.originalError?.name === 'ZodError') {
+        // If we have a validation error, return it directly
+        if (error.message) {
+          return error;
+        }
+        // Otherwise, format the Zod error
+        const zodError = error.originalError || error;
+        const errorMessage = zodError.issues?.[0]?.message || 'Validation error';
+        const extensions = {
+          code: 'BAD_USER_INPUT',
+          validationErrors: zodError.errors || []
+        };
+        
+        // Create a new error with the proper structure
+        const graphQLError = new GraphQLError(
+          errorMessage,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          extensions
+        );
+        
+        return graphQLError;
+      }
       
-    //   // Handle regular errors
-    //   if (error instanceof Error) {
-    //     return new Error(error.message);
-    //   }
+      // Handle regular errors
+      if (error instanceof Error) {
+        return error;
+      }
       
-    //   return new Error('An unknown error occurred');
-    // },
-    console.error('SHIELD ERROR DETAILS:', error);
-    return error instanceof Error 
-    ? error 
-    : new Error(error?.message || 'Permission denied');
-}
+      // Handle string errors
+      if (typeof error === 'string') {
+        return new Error(error);
+      }
+      
+      // Default error
+      return new Error('Not authorized to perform this action');
+    }
   }
 );

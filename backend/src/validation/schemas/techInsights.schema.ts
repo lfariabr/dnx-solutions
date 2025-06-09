@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Article input validation
-export const articleInputSchema = z.object({
+export const techInsightsInputSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title cannot exceed 100 characters'),
   slug: z.string().min(3, 'Slug must be at least 3 characters').max(100, 'Slug cannot exceed 100 characters')
     .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
@@ -13,8 +13,8 @@ export const articleInputSchema = z.object({
   published: z.boolean().optional(),
 });
 
-// Article update validation
-export const articleUpdateSchema = z.object({
+// TechInsights update validation
+export const techInsightsUpdateSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title cannot exceed 100 characters').optional(),
   slug: z.string().min(3, 'Slug must be at least 3 characters').max(100, 'Slug cannot exceed 100 characters')
     .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens').optional(),
@@ -27,5 +27,5 @@ export const articleUpdateSchema = z.object({
 });
 
 // Export types
-export type ArticleInput = z.infer<typeof articleInputSchema>;
-export type ArticleUpdateInput = z.infer<typeof articleUpdateSchema>;
+export type TechInsightsInput = z.infer<typeof techInsightsInputSchema>;
+export type TechInsightsUpdateInput = z.infer<typeof techInsightsUpdateSchema>;

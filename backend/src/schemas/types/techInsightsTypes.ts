@@ -1,5 +1,5 @@
-export const articleTypes = `#graphql
-  type Article {
+export const techInsightsTypes = `#graphql
+  type TechInsights {
     id: ID!
     title: String!
     slug: String!
@@ -14,7 +14,7 @@ export const articleTypes = `#graphql
     updatedAt: String!
   }
 
-  input ArticleInput {
+  input TechInsightsInput {
     title: String!
     slug: String!
     content: String!
@@ -25,7 +25,7 @@ export const articleTypes = `#graphql
     published: Boolean
   }
 
-  input ArticleUpdateInput {
+  input TechInsightsUpdateInput {
     title: String
     slug: String
     content: String

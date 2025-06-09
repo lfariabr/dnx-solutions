@@ -1,7 +1,7 @@
 import { caseStudyQueries } from './caseStudy/queries';
 import { caseStudyMutations } from './caseStudy/mutations';
-import { articleQueries } from './articles/queries';
-import { articleMutations } from './articles/mutations';
+import { techInsightsQueries } from './techInsights/queries';
+import { techInsightsMutations } from './techInsights/mutations';
 import { userQueries } from './users/queries';
 import { userMutations } from './users/mutations';
 import { rateTestQueries } from './rateTest/queries';
@@ -12,7 +12,7 @@ import { chatbotMutations } from './chatbot/mutations';
 export const resolvers = {
   Query: {
     ...caseStudyQueries,
-    ...articleQueries,
+    ...techInsightsQueries,
     ...userQueries,
     ...rateTestQueries,
     ...chatbotQueries,
@@ -20,7 +20,7 @@ export const resolvers = {
   
   Mutation: {
     ...caseStudyMutations,
-    ...articleMutations,
+    ...techInsightsMutations,
     ...userMutations,
     ...chatbotMutations,
   }

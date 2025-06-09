@@ -8,7 +8,7 @@ import {
   ReactNode 
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { gql, useMutation, ApolloError } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import Cookies from 'js-cookie';
 import { UserRole } from '../graphql/types/user.types';
 

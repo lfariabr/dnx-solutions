@@ -28,9 +28,21 @@ export function createApolloClient(): ApolloClient<NormalizedCacheObject> {
     let token = null;
     if (typeof window !== 'undefined') {
       try {
+        // First try to get token from localStorage
         token = localStorage.getItem('token');
+        
+        // If not found in localStorage, try to get from cookies
+        if (!token) {
+          const cookies = document.cookie.split(';').reduce((cookies, cookie) => {
+            const [name, value] = cookie.trim().split('=');
+            cookies[name] = value;
+            return cookies;
+          }, {} as Record<string, string>);
+          
+          token = cookies.token || null;
+        }
       } catch (e) {
-        console.error('Error accessing localStorage:', e);
+        console.error('Error accessing token storage:', e);
       }
     }
 
@@ -38,6 +50,9 @@ export function createApolloClient(): ApolloClient<NormalizedCacheObject> {
       headers: {
         ...headers,
         authorization: token ? `Bearer ${token}` : '',
+        // Ensure proper content type for all requests
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
     }));
 

@@ -1,6 +1,7 @@
 import CaseStudy, { ICaseStudy } from '../../models/CaseStudy';
 import { checkRole } from '../../utils/authUtils';
 import { CaseStudyInput, CaseStudyUpdateInput } from '../../validation/schemas/caseStudy.schema';
+import { GraphQLError } from 'graphql';
 
 type CreateCaseStudyArgs = {
   input: CaseStudyInput;
@@ -17,26 +18,58 @@ type DeleteCaseStudyArgs = {
 
 export const caseStudyMutations = {
   createCaseStudy: async (_: any, { input }: CreateCaseStudyArgs, context: any): Promise<ICaseStudy> => {
-    // Check if user is admin
-    checkRole(context, 'ADMIN');
-    
-    // Check if slug is already taken
-    const existingCaseStudy = await CaseStudy.findOne({ slug: input.slug });
-    if (existingCaseStudy) {
-      throw new Error('A case study with this slug already exists');
+    try {
+      // Check if user is admin
+      checkRole(context, 'ADMIN');
+      
+      // Check required fields
+      const requiredFields = [
+        'title', 'description', 'content', 'technologies', 'imageUrl', 'slug'
+      ];
+      
+      const missingFields = requiredFields.filter(field => !input[field as keyof CaseStudyInput]);
+      if (missingFields.length > 0) {
+        throw new GraphQLError(`Missing required fields: ${missingFields.join(', ')}`, {
+          extensions: { code: 'BAD_USER_INPUT' }
+        });
+      }
+      
+      // Check if slug is already taken
+      const existingCaseStudy = await CaseStudy.findOne({ slug: input.slug });
+      if (existingCaseStudy) {
+        throw new GraphQLError('A case study with this slug already exists', {
+          extensions: { code: 'BAD_USER_INPUT' }
+        });
+      }
+      
+      // Prepare case study data with defaults
+      const caseStudyData = {
+        ...input,
+        author: context.user?.id,
+        published: input.published || false,
+        featured: input.featured || false,
+        order: input.order || 0,
+        technologies: input.technologies || [],
+        publishedAt: input.published && !input.publishedAt ? new Date() : input.publishedAt,
+      };
+      
+      const caseStudy = new CaseStudy(caseStudyData);
+      await caseStudy.save();
+      
+      return caseStudy.populate(['author', 'relatedCaseStudies']);
+    } catch (error) {
+      console.error('Error in createCaseStudy:', error);
+      
+      // If it's already a GraphQLError, rethrow it
+      if (error instanceof GraphQLError) {
+        throw error;
+      }
+      
+      // For any other error, return a generic error
+      throw new GraphQLError('Failed to create case study', {
+        extensions: { code: 'INTERNAL_SERVER_ERROR' }
+      });
     }
-    
-    // Prepare case study data
-    const caseStudyData = {
-      ...input,
-      author: context.user.id,
-      publishedAt: input.published && !input.publishedAt ? new Date() : input.publishedAt,
-    };
-    
-    const caseStudy = new CaseStudy(caseStudyData);
-    await caseStudy.save();
-    
-    return caseStudy.populate(['author', 'relatedCaseStudies']);
   },
   
   updateCaseStudy: async (
