@@ -82,12 +82,17 @@ export function Header() {
               <span className="sr-only">Toggle theme</span>
             </Button>
 
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <UserIcon className="h-4 w-4" />
-                    <span className="hidden md:inline-block">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="gap-2 text-gray-700 hover:bg-gray-100 dark:text-black dark:hover:bg-gray-800"
+                  >
+                    <UserIcon className="h-4 w-4 dark:text-black" />
+                    <span className="hidden md:inline-flex items-center dark:text-black">
+                      {user?.role === 'ADMIN'}
                       {user?.name?.split(' ')[0] || 'Account'}
                     </span>
                   </Button>
@@ -106,8 +111,16 @@ export function Header() {
                     <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
                   {user?.role === 'ADMIN' && (
-                    <DropdownMenuItem asChild className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200">
-                      <Link href="/admin">Admin Dashboard</Link>
+                    <DropdownMenuItem 
+                      asChild 
+                      className="hover:bg-blue-50 dark:hover:bg-blue-900/50"
+                    >
+                      <Link 
+                        href="/admin" 
+                        className="w-full flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        <span className="font-medium">Admin Dashboard</span>
+                      </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
@@ -120,12 +133,13 @@ export function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
+            )}
+            {!isAuthenticated && (
               <div className="flex gap-2">
                 <Link href="/login">
                   <Button variant="ghost" 
-                  size="sm" 
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/30">
+                    size="sm" 
+                    className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-900/30">
                     Login
                   </Button>
                 </Link>
