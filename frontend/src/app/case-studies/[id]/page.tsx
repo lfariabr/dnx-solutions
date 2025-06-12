@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { format, parseISO, isValid } from 'date-fns';
 import { notFound } from 'next/navigation';
+import { MarkdownContent } from '@/components/layouts/MarkdownContent';
 
 interface CaseStudyDetailPageProps {
   params: Promise<{ id: string }>;
@@ -105,35 +106,8 @@ export default function CaseStudyDetailPage({ params }: CaseStudyDetailPageProps
             )}
 
             {/* Main content */}
-            <div className="prose max-w-none px-4">
-              <div dangerouslySetInnerHTML={{ __html: caseStudy.content || caseStudy.description }} />
-              
-              {(caseStudy.githubUrl || caseStudy.liveUrl) && (
-                <div className="flex flex-wrap gap-4 mt-8">
-                  {caseStudy.githubUrl && (
-                    <a 
-                      href={caseStudy.githubUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 border border-input bg-background rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <Github className="mr-2 h-4 w-4" />
-                      View on GitHub
-                    </a>
-                  )}
-                  {caseStudy.liveUrl && (
-                    <a 
-                      href={caseStudy.liveUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90"
-                    >
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      View Live Demo
-                    </a>
-                  )}
-                </div>
-              )}
+            <div className="prose dark:prose-invert max-w-none px-4 space-y-1">
+              <MarkdownContent content={caseStudy.content} />
             </div>
           </>
         )}
