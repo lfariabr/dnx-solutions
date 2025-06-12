@@ -15,6 +15,7 @@ import { MoonIcon, SunIcon, MenuIcon, UserIcon, LogOutIcon } from 'lucide-react'
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { ContactDialog } from "@/components/ui/contact-dialog";
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -66,9 +67,13 @@ export function Header() {
 
               asChild
             >
-              <Link href="/contact">
-                Contact Us
-              </Link>
+              <ContactDialog
+                trigger={
+                  <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-700 dark:bg-blue-700 dark:text-white dark:hover:bg-blue-50">
+                    Contact Us
+                  </Button>
+                }
+              />
             </Button>
 
             <Button

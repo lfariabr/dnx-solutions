@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MainLayout } from "@/components/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
+import { ContactDialog } from "@/components/ui/contact-dialog";
 import { ArrowRight, Cloud, Server, Cpu, BarChart2, CheckCircle } from "lucide-react";
 
 export default function Home() {
@@ -40,11 +41,13 @@ export default function Home() {
             Accelerate your cloud computing journey whether you're adopting, evolving, or operating cloud solutions.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 mt-10 sm:flex-row">
-            <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50 dark:bg-white dark:text-blue-700 dark:hover:bg-blue-50">
-              <Link href="/contact">
-                Get Started <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <ContactDialog
+              trigger={
+                <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 dark:bg-white dark:text-blue-700 dark:hover:bg-blue-50">
+                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              }
+            />
             <Button 
               asChild 
               size="lg" 
@@ -100,11 +103,13 @@ export default function Home() {
               Our team of certified AWS experts is here to help you every step of the way.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 mt-8 sm:flex-row">
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700">
-                <Link href="/contact">
-                  Contact Us Today
-                </Link>
-              </Button>
+              <ContactDialog
+                trigger={
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700">
+                    Contact Us Today
+                  </Button>
+                }
+              />
               <Button 
                 asChild 
                 size="lg" 
