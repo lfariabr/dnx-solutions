@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { format, parseISO, isValid } from "date-fns";
 import { notFound } from "next/navigation";
+import { MarkdownContent } from '@/components/layouts/MarkdownContent';
 
 interface TechInsightDetailPageProps {
   params: Promise<{ id: string }>;
@@ -107,10 +108,10 @@ export default function TechInsightDetailPage({ params }: TechInsightDetailPageP
             </div>
           )}
 
-          <div 
-            className="prose dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: techInsight.content }}
-          />
+          {/* Article content */}
+          <div className="prose dark:prose-invert max-w-none px-4 space-y-1">
+            <MarkdownContent content={techInsight.content} />
+            </div>
         </article>
       </div>
     </MainLayout>
