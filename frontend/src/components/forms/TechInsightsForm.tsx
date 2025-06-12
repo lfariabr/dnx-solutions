@@ -28,7 +28,6 @@ const techInsightsFormSchema = z.object({
     .min(1, { message: "Excerpt is required" })
     .max(150, { message: "Excerpt must be 150 characters or less" }),
   categories: z.array(z.string()).min(1, { message: "At least one category is required" }),
-  tags: z.array(z.string()).optional(),
   published: z.boolean().optional(),
 });
 
@@ -50,7 +49,7 @@ export function TechInsightsForm({
   cancelAction 
 }: TechInsightsFormProps) {
   const router = useRouter();
-  const [tagInput, setTagInput] = useState<string>("");
+  const [categoryInput, setCategoryInput] = useState<string>("");
   const [autoSlug, setAutoSlug] = useState(!techInsights?.slug);
   
   // Form default values
@@ -61,7 +60,6 @@ export function TechInsightsForm({
     imageUrl: techInsights?.imageUrl || "",
     excerpt: techInsights?.excerpt || "",
     categories: techInsights?.categories || [],
-    tags: techInsights?.tags || [],
     published: techInsights?.published || false,
   };
   
@@ -87,34 +85,34 @@ export function TechInsightsForm({
     }
   }, [form.watch('title'), autoSlug, form]);
   
-  // Handle tag input
-  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const value = tagInput.trim();
+  // Handle ca input
+  const handleCategoryInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const value = categoryInput.trim();
     if ((e.key === "Enter" || e.key === ",") && value) {
       e.preventDefault();
-      const currentTags = form.getValues("tags") || [];
-      if (!currentTags.includes(value)) {
-        form.setValue("tags", [...currentTags, value]);
-        setTagInput("");
+      const currentCategories = form.getValues("categories") || [];
+      if (!currentCategories.includes(value)) {
+        form.setValue("categories", [...currentCategories, value]);
+        setCategoryInput("");
       }
     }
   };
   
-  // Remove tag
-  const removeTag = (tag: string) => {
-    const currentTags = form.getValues("tags") || [];
+  // Remove ca
+  const removeCategory = (category: string) => {
+    const currentCategories = form.getValues("categories") || [];
     form.setValue(
-      "tags",
-      currentTags.filter((t) => t !== tag)
+      "categories",
+      currentCategories.filter((t) => t !== category)
     );
   };
 
   // Handle form submission
   const handleSubmit = async (formData: TechInsightsFormValues) => {
-    // Ensure tags is always an array, defaulting to empty array if undefined
+    // Ensure categories is always an array, defaulting to empty array if undefined
     const data = {
       ...formData,
-      tags: formData.tags || [],
+      categories: formData.categories || [],
     };
     await onSubmit(data);
   };
@@ -265,16 +263,16 @@ export function TechInsightsForm({
                       <div className="flex gap-2">
                         <Input
                           placeholder="Add a category and press Enter"
-                          value={tagInput}
-                          onChange={(e) => setTagInput(e.target.value)}
+                          value={categoryInput}
+                          onChange={(e) => setCategoryInput(e.target.value)}
                           onKeyDown={(e) => {
-                            const value = tagInput.trim();
+                            const value = categoryInput.trim();
                             if ((e.key === "Enter" || e.key === ",") && value) {
                               e.preventDefault();
                               const currentCategories = form.getValues("categories") || [];
                               if (!currentCategories.includes(value)) {
                                 form.setValue("categories", [...currentCategories, value]);
-                                setTagInput("");
+                                setCategoryInput("");
                               }
                             }
                           }}
@@ -284,12 +282,12 @@ export function TechInsightsForm({
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const value = tagInput.trim();
+                            const value = categoryInput.trim();
                             if (value) {
                               const currentCategories = form.getValues("categories") || [];
                               if (!currentCategories.includes(value)) {
                                 form.setValue("categories", [...currentCategories, value]);
-                                setTagInput("");
+                                setCategoryInput("");
                               }
                             }
                           }}
@@ -301,42 +299,6 @@ export function TechInsightsForm({
                   </FormControl>
                   <FormDescription>
                     Categories help organize your tech insights (e.g., "Frontend", "Backend", "DevOps")
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {/* Tags input */}
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tags</FormLabel>
-                  <FormControl>
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="Add tags (press Enter or comma to add)"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyDown={handleTagInputKeyDown}
-                      />
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {field.value?.map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="py-1 px-3">
-                            {tag}
-                            <X
-                              className="ml-1 h-3 w-3 cursor-pointer"
-                              onClick={() => removeTag(tag)}
-                            />
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormDescription>
-                    Tags help categorize your tech insight
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

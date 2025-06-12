@@ -40,7 +40,6 @@ export interface TechInsightsInput {
   content: string;
   excerpt: string;
   categories: string[];
-  tags: string[];
   imageUrl?: string;
   published?: boolean;
 }

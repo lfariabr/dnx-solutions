@@ -148,7 +148,7 @@ export default function TechInsightsAdminPage() {
                   <TableHead>Title</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Last Updated</TableHead>
-                  <TableHead>Tags</TableHead>
+                  <TableHead>Categories</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -166,12 +166,12 @@ export default function TechInsightsAdminPage() {
                     <TableCell>{formatDateSafe(techInsights.updatedAt)}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {techInsights.tags?.map((tag, index) => (
+                        {techInsights.categories?.map((category, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
-                            {tag}
+                            {category}
                           </Badge>
                         ))}
-                        {(!techInsights.tags || techInsights.tags.length === 0) && (
+                        {(!techInsights.categories || techInsights.categories.length === 0) && (
                           <span className="text-muted-foreground text-xs">No tags</span>
                         )}
                       </div>

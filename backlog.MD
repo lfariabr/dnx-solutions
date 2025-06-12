@@ -16,7 +16,11 @@
 -- Footer Pages
 --- About Us Page
 --- Careers Page
---- Solutions Page  
+--- Solutions Page
+---- Adopt
+---- Evolve
+---- Operate
+---- DevOps Transformation
 --- Privacy Policy Page
 --- Terms of Service Page
 --- Page Cookie Policy

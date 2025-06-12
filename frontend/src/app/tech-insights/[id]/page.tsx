@@ -84,14 +84,14 @@ export default function TechInsightDetailPage({ params }: TechInsightDetailPageP
               <span>Published {formatDateSafe(techInsight.createdAt)}</span>
             </div>
 
-            {techInsight.tags && techInsight.tags.length > 0 && (
+            {techInsight.categories && techInsight.categories.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4">
-                {techInsight.tags.map((tag, index) => (
+                {techInsight.categories.map((category, index) => (
                   <span 
                     key={index}
                     className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-xs"
                   >
-                    {tag}
+                    {category}
                   </span>
                 ))}
               </div>
