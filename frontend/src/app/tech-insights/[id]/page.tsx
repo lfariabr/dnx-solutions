@@ -21,10 +21,10 @@ const formatDateSafe = (dateString: string) => {
     if (isValid(date)) {
       return format(date, 'MMMM d, yyyy');
     }
-    return 'Unknown date';
+    return 'Recently';
   } catch (error) {
     console.error('Date formatting error:', error);
-    return 'Unknown date';
+    return 'Recently';
   }
 };
 
@@ -36,7 +36,7 @@ export default function TechInsightDetailPage({ params }: TechInsightDetailPageP
   if (loading) {
     return (
       <MainLayout>
-        <div className="container py-12 max-w-4xl px-4">
+        <div className="container py-16 max-w-3xl mx-auto px-4">
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
@@ -48,7 +48,7 @@ export default function TechInsightDetailPage({ params }: TechInsightDetailPageP
   if (error) {
     return (
       <MainLayout>
-        <div className="container py-12 max-w-4xl">
+        <div className="container py-16 max-w-3xl mx-auto px-4">
           <Alert variant="destructive" className="my-8">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>Error loading tech insight: {error}</AlertDescription>
@@ -64,55 +64,56 @@ export default function TechInsightDetailPage({ params }: TechInsightDetailPageP
 
   return (
     <MainLayout>
-      <div className="container py-12 max-w-4xl px-4">
-        <Link 
-          href="/tech-insights" 
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Tech Insights
-        </Link>
-
-        <article className="prose dark:prose-invert max-w-none">
-          <header className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight mb-4">
-              {techInsight.title}
-            </h1>
+      <div className="container py-16 max-w-3xl mx-auto px-4">
+        <div className="space-y-8">
+          <div>
+            <Link 
+              href="/tech-insights" 
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Tech Insights
+            </Link>
             
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar className="mr-2 h-4 w-4" />
-              <span>Published {formatDateSafe(techInsight.createdAt)}</span>
-            </div>
-
-            {techInsight.categories && techInsight.categories.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4">
-                {techInsight.categories.map((category, index) => (
-                  <span 
-                    key={index}
-                    className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-xs"
-                  >
-                    {category}
-                  </span>
-                ))}
+            <div className="space-y-4">
+              <h1 className="text-4xl font-bold tracking-tight">{techInsight.title}</h1>
+              
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4 mr-2" />
+                <span>Published {formatDateSafe(techInsight.createdAt)}</span>
               </div>
-            )}
-          </header>
+            </div>
+          </div>
 
+          {/* Tech insight image */}
           {techInsight.imageUrl && (
-            <div className="mb-8 rounded-lg overflow-hidden">
-              <img 
-                src={techInsight.imageUrl} 
-                alt={techInsight.title}
-                className="w-full h-auto rounded-lg"
+            <div className="rounded-lg overflow-hidden shadow-md">
+              <div 
+                className="aspect-video w-full bg-cover bg-center" 
+                style={{ backgroundImage: `url(${techInsight.imageUrl})` }}
               />
             </div>
           )}
 
-          {/* Article content */}
-          <div className="prose dark:prose-invert max-w-none px-4 space-y-1">
-            <MarkdownContent content={techInsight.content} />
+          {/* Tags */}
+          {techInsight.categories && techInsight.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {techInsight.categories.map((category: string, index: number) => (
+                <span 
+                  key={index}
+                  className="bg-muted text-foreground px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  {category}
+                </span>
+              ))}
             </div>
-        </article>
+          )}
+
+          {/* Main content */}
+          <div className="prose dark:prose-invert max-w-none pt-4">
+            <MarkdownContent content={techInsight.content} />
+          </div>
+        </div>
       </div>
     </MainLayout>
   );

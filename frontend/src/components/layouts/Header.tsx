@@ -37,7 +37,7 @@ export function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                DNX Solutions
+                dnx.solutions
               </span>
             </Link>
           </div>

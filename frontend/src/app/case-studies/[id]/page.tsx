@@ -42,7 +42,7 @@ export default function CaseStudyDetailPage({ params }: CaseStudyDetailPageProps
 
   return (
     <MainLayout>
-      <div className="container py-12 max-w-4xl">
+      <div className="container py-16 max-w-4xl mx-auto px-4">
         {/* Loading state */}
         {loading && (
           <div className="flex justify-center items-center py-20">
@@ -62,28 +62,33 @@ export default function CaseStudyDetailPage({ params }: CaseStudyDetailPageProps
 
         {/* Case study details */}
         {!loading && !error && caseStudy && (
-          <>
-            <div className="mb-6 px-4">
-              <Link href="/case-studies" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+          <div className="space-y-8">
+            <div>
+              <Link 
+                href="/case-studies" 
+                className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+              >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Case Studies
               </Link>
               
-              <h1 className="text-4xl font-bold tracking-tight mt-2">{caseStudy.title}</h1>
-              
-              {caseStudy.subtitle && (
-                <p className="text-xl text-muted-foreground mt-2">{caseStudy.subtitle}</p>
-              )}
-              
-              <div className="flex items-center mt-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4 mr-1" />
-                <span>Published {formatDateSafe(caseStudy.publishedAt || caseStudy.createdAt)}</span>
+              <div className="space-y-4">
+                <h1 className="text-4xl font-bold tracking-tight">{caseStudy.title}</h1>
+                
+                {caseStudy.subtitle && (
+                  <p className="text-xl text-muted-foreground">{caseStudy.subtitle}</p>
+                )}
+                
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  <span>Published {formatDateSafe(caseStudy.publishedAt || caseStudy.createdAt)}</span>
+                </div>
               </div>
             </div>
 
             {/* Case study image */}
             {caseStudy.imageUrl && (
-              <div className="relative w-full rounded-lg overflow-hidden mb-8 px-4">
+              <div className="rounded-lg overflow-hidden shadow-md">
                 <div 
                   className="aspect-video w-full bg-cover bg-center" 
                   style={{ backgroundImage: `url(${caseStudy.imageUrl})` }}
@@ -93,11 +98,11 @@ export default function CaseStudyDetailPage({ params }: CaseStudyDetailPageProps
 
             {/* Technologies */}
             {caseStudy.technologies && caseStudy.technologies.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6 px-4">
+              <div className="flex flex-wrap gap-2">
                 {caseStudy.technologies.map((tech: string, index: number) => (
                   <span 
                     key={index}
-                    className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
+                    className="bg-muted text-foreground px-3 py-1 rounded-full text-sm font-medium"
                   >
                     {tech}
                   </span>
@@ -106,10 +111,10 @@ export default function CaseStudyDetailPage({ params }: CaseStudyDetailPageProps
             )}
 
             {/* Main content */}
-            <div className="prose dark:prose-invert max-w-none px-4 space-y-1">
+            <div className="prose dark:prose-invert max-w-none pt-4">
               <MarkdownContent content={caseStudy.content} />
             </div>
-          </>
+          </div>
         )}
       </div>
     </MainLayout>

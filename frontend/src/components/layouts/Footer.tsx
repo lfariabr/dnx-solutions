@@ -70,18 +70,18 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/case-studies" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Case Studies
-                </Link>
-              </li>
-              <li>
                 <Link href="/careers" className="text-sm text-gray-400 hover:text-white transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Blog
+                <Link href="/case-studies" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Case Studies
+                </Link>
+              </li>
+              <li>
+                <Link href="/tech-insights" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Tech Insights
                 </Link>
               </li>
             </ul>
@@ -115,13 +115,10 @@ export function Footer() {
               &copy; {currentYear} DNX Solutions. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-xs text-gray-500 hover:text-white transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-xs text-gray-500 hover:text-white transition-colors">
+              <Link href="/terms/terms-of-service" className="text-xs text-gray-500 hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/cookies" className="text-xs text-gray-500 hover:text-white transition-colors">
+              <Link href="/terms/cookie-policy" className="text-xs text-gray-500 hover:text-white transition-colors">
                 Cookie Policy
               </Link>
             </div>
